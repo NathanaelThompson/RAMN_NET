@@ -1,0 +1,17 @@
+Client
+-------
+1. Connect to Router -- DONE
+2. Register a username -- Aaron
+3. Display actie users -- Aaron
+4. Connect to users
+5. Display chat text
+6. Disconnect
+
+Router
+--------
+1. Make Connections -- DONE
+2. Make simultaneous connections -- Nate
+3. Point to Point communication -- Nate
+	3a. send client info -- Nate
+	3b. update routing tables with client info -- Nate
+4. Display active connections
