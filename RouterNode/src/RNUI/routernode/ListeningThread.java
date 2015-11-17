@@ -28,11 +28,13 @@ public class ListeningThread extends Thread{
     private String threadName;
     private ServerSocket listenSocket;
     private int listenPort;
+    Object[][] routingTable;
     
-    public ListeningThread(String name, int port)
+    public ListeningThread(String name, int port, Object[][] rt)
     {
         threadName = name;
         listenPort = port;
+        routingTable = rt;
     }
     public void listenStart()
     {
@@ -50,8 +52,6 @@ public class ListeningThread extends Thread{
             listenSocket.accept();
         }
         catch(IOException ioe)
-        {
-            
-        }
+        {}
     }
 }

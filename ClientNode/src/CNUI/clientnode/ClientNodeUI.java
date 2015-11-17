@@ -335,12 +335,14 @@ public class ClientNodeUI extends javax.swing.JFrame {
     BufferedReader fromRouter = null;
     
     private void connectRouterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectRouterButtonActionPerformed
+        
         String routerIP = routerIPTF.getText();
-        int portNum = 5566;
+        int portNum = 9999;
         
         try
         {
             sockToRouter = new Socket(routerIP, portNum);
+            
             toRouter = new PrintWriter(sockToRouter.getOutputStream(),true);
             fromRouter = new BufferedReader(new InputStreamReader(sockToRouter.getInputStream()));
             usernameTF.setEnabled(true);
@@ -356,6 +358,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
             routerErrLabel.setVisible(true);
             routerErrLabel.setEnabled(true);
         }
+        
     }//GEN-LAST:event_connectRouterButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
