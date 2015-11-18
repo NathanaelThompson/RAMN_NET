@@ -36,7 +36,6 @@ public class RouterNodeUI extends javax.swing.JFrame {
     public static final String RAMN_REQUEST_REGISTER = "REGISTER";
     
     RoutingTableManager rtManager = new RoutingTableManager();
-    
     /**
      * Creates new form RouterNodeUI
      */
@@ -74,7 +73,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         exitButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         textArea1 = new java.awt.TextArea();
-        jButton1 = new javax.swing.JButton();
+        listenClientButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RAMN_Router");
@@ -204,7 +203,12 @@ public class RouterNodeUI extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 155, 0)), "Active Connections"));
 
-        jButton1.setText("Listen for Clients");
+        listenClientButton.setText("Listen for Clients");
+        listenClientButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listenClientButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -212,7 +216,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
                 .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -222,7 +226,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
             .addComponent(textArea1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -283,7 +287,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
             listenPort = 9999;
         }
         
-        ListeningThread lt = new ListeningThread("ListenForRouter", listenPort, rtManager.routingTable);
+        RouterListenerThread lt = new RouterListenerThread("ListenForRouter", listenPort, rtManager.routingTable);
         lt.listenStart();
     }//GEN-LAST:event_startListenButtonActionPerformed
 
@@ -322,6 +326,11 @@ public class RouterNodeUI extends javax.swing.JFrame {
             invalidConnPortErr.setVisible(true);
         }
     }//GEN-LAST:event_connectStartButtonActionPerformed
+
+    private void listenClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listenClientButtonActionPerformed
+        // TODO add your handling code here:
+        //start a new thread to listen for clients
+    }//GEN-LAST:event_listenClientButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -367,12 +376,12 @@ public class RouterNodeUI extends javax.swing.JFrame {
     private javax.swing.JLabel invalidIPErr;
     private javax.swing.JLabel invalidPortErr;
     private javax.swing.JTextField ipTF;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JButton listenClientButton;
     private javax.swing.JTextField listenPortTF;
     private javax.swing.JButton startListenButton;
     private java.awt.TextArea textArea1;

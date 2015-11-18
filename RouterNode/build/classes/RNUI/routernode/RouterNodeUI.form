@@ -299,7 +299,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" pref="155" max="-2" attributes="0"/>
+                  <Component id="listenClientButton" min="-2" pref="155" max="-2" attributes="0"/>
                   <EmptySpace pref="214" max="32767" attributes="0"/>
                   <Component id="textArea1" min="-2" pref="373" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -311,7 +311,7 @@
               <Component id="textArea1" alignment="1" pref="331" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" pref="38" max="-2" attributes="0"/>
+                  <Component id="listenClientButton" min="-2" pref="38" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -320,10 +320,13 @@
       <SubComponents>
         <Component class="java.awt.TextArea" name="textArea1">
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="listenClientButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Listen for Clients"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listenClientButtonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

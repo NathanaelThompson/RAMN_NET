@@ -19,6 +19,7 @@ package CNUI.clientnode;
 
 import java.io.*;
 import java.net.*;
+import javax.swing.DefaultListModel;
 
 public class ClientNodeUI extends javax.swing.JFrame {
 
@@ -30,9 +31,11 @@ public class ClientNodeUI extends javax.swing.JFrame {
     public static final String RAMN_RESPONSE_OK = "OK";
     public static final String RAMN_RESPONSE_ERROR = "ERROR";
     public static final String RAMN_REPSONSE_DENIED = "DENIED";
-    public static final String RAMN_REQUEST_CONNECTION = "RCON";
-    public static final String RAMN_REQUEST_DISCONNECT = "RDCON";
+    public static final String RAMN_REQUEST_CONNECTION = "CON";//for connecting to a peer
+    public static final String RAMN_REQUEST_DISCONNECT = "DCON";//for disconnection from a peer
+    public static final String RAMN_REQUEST_ROUTER_DISCONNECT = "RTDCON";
     public static final String RAMN_REQUEST_REGISTER = "REGISTER";
+    public static final String RAMN_REQUEST_PEERLIST = "PEERS";
     
     public ClientNodeUI() {
         initComponents();
@@ -66,9 +69,9 @@ public class ClientNodeUI extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         connectClientButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        connectionListTA = new javax.swing.JList();
+        userJList = new javax.swing.JList();
         connErrLabel = new javax.swing.JLabel();
-        refreshButton = new javax.swing.JButton();
+        refreshClientButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         chatTA = new java.awt.TextArea();
@@ -144,7 +147,8 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
         styleErrLabel.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
         styleErrLabel.setForeground(new java.awt.Color(255, 0, 0));
-        styleErrLabel.setText("*username must be between 4 and 32 characters");
+        styleErrLabel.setText("*username cannot contain special characters\n(@,$, \", \', etc...)");
+        styleErrLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         styleErrLabel.setEnabled(false);
 
         registerButton.setText("Register");
@@ -168,10 +172,9 @@ public class ClientNodeUI extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(usernameTF)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(uniqueErrLabel)
-                                    .addComponent(styleErrLabel))
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(uniqueErrLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(styleErrLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(registerButton)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -187,8 +190,8 @@ public class ClientNodeUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(uniqueErrLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(styleErrLabel)
-                .addGap(33, 33, 33)
+                .addComponent(styleErrLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(registerButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -198,21 +201,21 @@ public class ClientNodeUI extends javax.swing.JFrame {
         connectClientButton.setText("Connect");
         connectClientButton.setEnabled(false);
 
-        connectionListTA.setModel(new javax.swing.AbstractListModel() {
+        userJList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Usernames here!" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        connectionListTA.setEnabled(false);
-        jScrollPane1.setViewportView(connectionListTA);
+        userJList.setEnabled(false);
+        jScrollPane1.setViewportView(userJList);
 
         connErrLabel.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
         connErrLabel.setForeground(new java.awt.Color(255, 0, 0));
         connErrLabel.setText("*connection failed, please try again");
         connErrLabel.setEnabled(false);
 
-        refreshButton.setText("Refresh");
-        refreshButton.setEnabled(false);
+        refreshClientButton.setText("Refresh");
+        refreshClientButton.setEnabled(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -227,7 +230,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(connErrLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(refreshButton)))
+                        .addComponent(refreshClientButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -241,7 +244,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                         .addComponent(connErrLabel)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(refreshButton)
+                        .addComponent(refreshClientButton)
                         .addComponent(connectClientButton))))
         );
 
@@ -304,13 +307,13 @@ public class ClientNodeUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 941, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(exitButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(15, 15, 15)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -336,6 +339,21 @@ public class ClientNodeUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        //Tell the router to remove this client from the routing table,
+        toRouter.println("RDCON");
+        try
+        {            //and close whatever streams are open,
+            sockToRouter.close();
+            toRouter.close();
+            fromRouter.close();
+            
+            sockToPeer.close();
+            toPeer.close();
+            fromPeer.close();
+        }
+        catch(Exception ex){}
+        
+        //and exit.
         System.exit(0);
     }//GEN-LAST:event_exitButtonActionPerformed
 
@@ -393,6 +411,24 @@ public class ClientNodeUI extends javax.swing.JFrame {
             toRouter.println(RAMN_REQUEST_REGISTER);
             toRouter.println(username);
             toRouter.flush();
+            
+            try
+            {
+                String ramnResponse = fromRouter.readLine();
+                if(ramnResponse.equals(RAMN_RESPONSE_OK))
+                {
+                    //get users connected to the network
+                    //fill connectionListTA
+                    //enable connectionListTA, connectClientButton, and refreshClientButton
+                    DefaultListModel list = new DefaultListModel();
+                    while((ramnResponse = fromRouter.readLine()) != null)
+                    {
+                        list.addElement(ramnResponse);
+                    }
+                    userJList.setModel(list);
+                }
+            }
+            catch(IOException ioe){}
         }
     }//GEN-LAST:event_registerButtonActionPerformed
 
@@ -437,7 +473,6 @@ public class ClientNodeUI extends javax.swing.JFrame {
     private javax.swing.JLabel connErrLabel;
     private javax.swing.JButton connectClientButton;
     private javax.swing.JButton connectRouterButton;
-    private javax.swing.JList connectionListTA;
     private javax.swing.JButton disconnButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
@@ -447,7 +482,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton refreshButton;
+    private javax.swing.JButton refreshClientButton;
     private javax.swing.JButton registerButton;
     private javax.swing.JLabel routerErrLabel;
     private javax.swing.JTextField routerIPTF;
@@ -456,6 +491,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
     private java.awt.TextArea textArea1;
     private javax.swing.JTextField textToSend;
     private javax.swing.JLabel uniqueErrLabel;
+    private javax.swing.JList userJList;
     private javax.swing.JTextField usernameTF;
     // End of variables declaration//GEN-END:variables
 }
