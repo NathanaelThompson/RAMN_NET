@@ -25,6 +25,15 @@ public class ClientNodeUI extends javax.swing.JFrame {
     /**
      * Creates new form ClientNodeUI
      */
+    
+    /*The start of the RAMN_NET protocol.*/
+    public static final String RAMN_RESPONSE_OK = "OK";
+    public static final String RAMN_RESPONSE_ERROR = "ERROR";
+    public static final String RAMN_REPSONSE_DENIED = "DENIED";
+    public static final String RAMN_REQUEST_CONNECTION = "RCON";
+    public static final String RAMN_REQUEST_DISCONNECT = "RDCON";
+    public static final String RAMN_REQUEST_REGISTER = "REGISTER";
+    
     public ClientNodeUI() {
         initComponents();
         routerErrLabel.setVisible(false);
@@ -330,9 +339,9 @@ public class ClientNodeUI extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitButtonActionPerformed
 
-    Socket sockToRouter = null;
-    PrintWriter toRouter = null;
-    BufferedReader fromRouter = null;
+    Socket sockToRouter = null, sockToPeer = null;
+    PrintWriter toRouter = null, toPeer = null;
+    BufferedReader fromRouter = null, fromPeer = null;
     
     private void connectRouterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectRouterButtonActionPerformed
         
@@ -371,9 +380,20 @@ public class ClientNodeUI extends javax.swing.JFrame {
             return;
         }
         
-        //Get usernames
-        //if username is taken, error, return
+        //Get usernames from router
+        
+        //if username is taken or contains illegal characters, error, return
         //else, add username and update routing table
+        if(false)
+        {
+            
+        }
+        else
+        {
+            toRouter.println(RAMN_REQUEST_REGISTER);
+            toRouter.println(username);
+            toRouter.flush();
+        }
     }//GEN-LAST:event_registerButtonActionPerformed
 
     /**

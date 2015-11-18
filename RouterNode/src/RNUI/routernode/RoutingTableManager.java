@@ -20,57 +20,14 @@ package RNUI.routernode;
  *
  * @author Nate
  */
-public class RoutingTableManager implements RoutingTableInterface{
-    public static Object[][] routingTable;
+import java.util.ArrayList;
+
+public class RoutingTableManager
+{
+    //public static Object[][] routingTable;
+    public static ArrayList<RAMNConnection> routingTable;
     public RoutingTableManager()
     {
-        routingTable = new Object[100][2];
-    }
-    @Override
-    public Object[][] getRoutingTable()
-    {
-        return routingTable;
-    }
-    @Override
-    public void setRoutingTable(Object[][] rt)
-    {
-        routingTable = rt;
-    }
-    @Override
-    public void addToRoutingTable(String address, String username)
-    {
-        for(int i = 0; i < routingTable.length; i++)
-        {
-            if(routingTable[i][0] == null)
-            {
-                routingTable[i][0] = address;
-                routingTable[i][1] = username;
-                return;
-            }
-        }
-    }
-    @Override
-    public void removeFromRoutingTable(String username)
-    {
-        for(int i = 0; i < routingTable.length; i++)
-        {
-            if(routingTable[i][1].equals(username))
-            {
-                routingTable[i][0] = null;
-                routingTable[i][1] = null;
-            }
-        }
-    }
-    @Override
-    public void removeFromRoutingTable(String address, String username)
-    {
-        for(int i = 0; i < routingTable.length; i++)
-        {
-            if(routingTable[i][0].equals(address) || routingTable[i][1].equals(username))
-            {
-                routingTable[i][0] = null;
-                routingTable[i][1] = null;
-            }
-        }
+        routingTable = new ArrayList<>(100);
     }
 }

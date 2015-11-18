@@ -22,17 +22,18 @@ package RNUI.routernode;
  */
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 public class ListeningThread extends Thread{
     private Thread th;
-    private String threadName;
+    private final String threadName;
     private ServerSocket listenSocket;
-    private int listenPort;
-    Object[][] routingTable;
+    private final int listenPort;
+    ArrayList<RAMNConnection> routingTable;
     
-    public ListeningThread(String name, int port, Object[][] rt)
+    public ListeningThread(String t_name, int port, ArrayList<RAMNConnection> rt)
     {
-        threadName = name;
+        threadName = t_name;
         listenPort = port;
         routingTable = rt;
     }
@@ -44,12 +45,15 @@ public class ListeningThread extends Thread{
             th.start();
         }
     }
+    
+    @Override
     public void run()
     {
         try
         {
             listenSocket = new ServerSocket(listenPort);
             listenSocket.accept();
+            
         }
         catch(IOException ioe)
         {}

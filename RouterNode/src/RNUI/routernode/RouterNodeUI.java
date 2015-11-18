@@ -26,12 +26,20 @@ import java.io.*;
 import java.net.*;
 
 public class RouterNodeUI extends javax.swing.JFrame {
-
+    
+    /*The start of the RAMN_NET protocol.*/
+    public static final String RAMN_RESPONSE_OK = "OK";
+    public static final String RAMN_RESPONSE_ERROR = "ERROR";
+    public static final String RAMN_REPSONSE_DENIED = "DENIED";
+    public static final String RAMN_REQUEST_CONNECTION = "RCON";
+    public static final String RAMN_REQUEST_DISCONNECT = "RDCON";
+    public static final String RAMN_REQUEST_REGISTER = "REGISTER";
+    
+    RoutingTableManager rtManager = new RoutingTableManager();
+    
     /**
      * Creates new form RouterNodeUI
      */
-    RoutingTableManager rtManager = new RoutingTableManager();
-    Object[][] routingTable = rtManager.getRoutingTable();
     
     public RouterNodeUI() {
         
@@ -39,7 +47,6 @@ public class RouterNodeUI extends javax.swing.JFrame {
         invalidPortErr.setVisible(false);
         invalidConnPortErr.setVisible(false);
         invalidIPErr.setVisible(false);
-        routingTable = new Object[100][2];
     }
 
     /**
@@ -276,7 +283,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
             listenPort = 9999;
         }
         
-        ListeningThread lt = new ListeningThread("ListenForRouter", listenPort, routingTable);
+        ListeningThread lt = new ListeningThread("ListenForRouter", listenPort, rtManager.routingTable);
         lt.listenStart();
     }//GEN-LAST:event_startListenButtonActionPerformed
 
