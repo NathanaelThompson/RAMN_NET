@@ -391,20 +391,33 @@ public class ClientNodeUI extends javax.swing.JFrame {
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
         String username = usernameTF.getText();
         
-        if(username.length() < 4 || username.length() > 32)
+        //^ finds the start of a string
+        //[a-zA-Z0-9_-] finds sequence of lower/upper case, numbers, underscore, and hyphen
+        //{4,30} establishes entry must be min 4 length, max 32 length
+        //$ asserts end of the string
+        String pattern = "^[a-zA-Z0-9_-]{4,32}$";
+
+        if(username.length() < 4 && username.length() > 32)
         {
             styleErrLabel.setVisible(true);
             styleErrLabel.setEnabled(true);
             return;
         }
         
-        //Get usernames from router
+        TODO: /*Get usernames from router
+        List nameList = new ArrayList();
+        Populating the list depends on how the names are being stored in the router
+        Possibilities: File read/write, For-each loop, While loop
+        }*/
         
         //if username is taken or contains illegal characters, error, return
         //else, add username and update routing table
-        if(false)
+        if(!username.matches(pattern))
         {
-            
+            /*If name fails, we print to the error label the error message
+            styleErrLabel.setText("Invalid username: " + username);
+            usernameTF.grabFocus();
+            */
         }
         else
         {
@@ -421,7 +434,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     //fill connectionListTA
                     //enable connectionListTA, connectClientButton, and refreshClientButton
                     DefaultListModel list = new DefaultListModel();
-                    while((ramnResponse = fromRouter.readLine()) != null)
+                    while((ramnResponse = fromRouter.readLine()) != null) //This seems sorta weird test condition
                     {
                         list.addElement(ramnResponse);
                     }
