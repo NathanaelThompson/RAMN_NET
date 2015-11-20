@@ -27,13 +27,16 @@ import java.net.*;
 
 public class RouterNodeUI extends javax.swing.JFrame {
     
-    /*The start of the RAMN_NET protocol.*/
-    public static final String RAMN_RESPONSE_OK = "OK";
-    public static final String RAMN_RESPONSE_ERROR = "ERROR";
-    public static final String RAMN_REPSONSE_DENIED = "DENIED";
-    public static final String RAMN_REQUEST_CONNECTION = "RCON";
-    public static final String RAMN_REQUEST_DISCONNECT = "RDCON";
-    public static final String RAMN_REQUEST_REGISTER = "REGISTER";
+     //The RAMN_NET protocol definition
+    public static final String RAMN_RESPONSE_OK = "OK";//confirmation response
+    public static final String RAMN_RESPONSE_ERROR = "ERROR";//error in the request
+    public static final String RAMN_RESPONSE_DENIED = "DENIED";//request is denied: could add specific codes here and @RAMN_RESPONSE_ERROR
+    public static final String RAMN_TRANSFER_COMPLETE = "COMPLETE";
+    public static final String RAMN_REQUEST_CONNECTION = "CON";//for connecting to a peer
+    public static final String RAMN_REQUEST_DISCONNECT = "DCON";//for disconnection from a peer
+    public static final String RAMN_REQUEST_ROUTER_DISCONNECT = "RTDCON";//for disconnecting from a router
+    public static final String RAMN_REQUEST_REGISTER = "REGISTER";//to attempt to register a new user
+    public static final String RAMN_REQUEST_PEERLIST = "PEERS";//to request all active connections
     
     RoutingTableManager rtManager = new RoutingTableManager();
     /**
@@ -287,8 +290,8 @@ public class RouterNodeUI extends javax.swing.JFrame {
             listenPort = 9999;
         }
         
-        RouterListenerThread lt = new RouterListenerThread("ListenForRouter", listenPort, rtManager.routingTable);
-        lt.listenStart();
+        RouterListenerThread rlt = new RouterListenerThread("ListenForRouter", listenPort, rtManager.routingTable);
+        rlt.listenStart();
     }//GEN-LAST:event_startListenButtonActionPerformed
 
     Socket routerConnSocket = null;

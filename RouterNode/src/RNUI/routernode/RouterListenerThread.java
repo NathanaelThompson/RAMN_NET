@@ -23,13 +23,16 @@ package RNUI.routernode;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
-
+import javax.swing.JOptionPane;
 public class RouterListenerThread extends Thread{
     private Thread th;
     private final String threadName;
     private ServerSocket listenSocket;
     private final int listenPort;
     ArrayList<RAMNConnection> routingTable;
+    BufferedReader fromConnection=null;
+    PrintWriter toConnection=null;
+    Socket incConnection=null;
     
     public RouterListenerThread(String t_name, int port, ArrayList<RAMNConnection> rt)
     {
@@ -48,16 +51,16 @@ public class RouterListenerThread extends Thread{
     
     @Override
     public void run()
-    {
-        Socket incConnection;
+    {   
         RAMNConnection metaData;
-        
         try
         {
             //grab the incoming connection from the router
             listenSocket = new ServerSocket(listenPort);
             incConnection = listenSocket.accept();
-                
+            toConnection= new PrintWriter(incConnection.getOutputStream(),true);
+            fromConnection= new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
+            
             //get the remote socket address...
             InetSocketAddress sockAddr = (InetSocketAddress)incConnection.getRemoteSocketAddress();
             InetAddress iAddress = sockAddr.getAddress();
@@ -71,7 +74,74 @@ public class RouterListenerThread extends Thread{
             metaData = new RAMNConnection("RAMN_ROUTER", address, incConnection);
             routingTable.add(metaData);
         }
-        catch(IOException ioe){}
+        catch(IOException ioe)
+        {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Could not establish an incoming connection to a router. Please try again.", 
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         
+        //while the connection is open
+        String message;
+        while(incConnection.isConnected())
+        {
+            try
+            {
+                message = fromConnection.readLine();
+                makeResponse(message);
+            }
+            catch(IOException ioe)
+            {}
+        }
+    }
+    public void makeResponse(String input)
+    {
+        if(input == null || input.isEmpty())
+            return;
+        switch(input)
+        {
+            case RouterNodeUI.RAMN_REQUEST_CONNECTION://WIP
+                toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                break;
+            case RouterNodeUI.RAMN_REQUEST_DISCONNECT:
+                String userToDisconnect;
+                try
+                {
+                    userToDisconnect = fromConnection.readLine();
+                    for(int i = 0; i < routingTable.size(); i++)
+                    {
+                        if(routingTable.get(i).getUsername().equals(userToDisconnect))
+                        {
+                            routingTable.get(i).getSocket().close();
+                            routingTable.set(i, null);
+                        }
+                    }
+                }
+                catch(IOException ioe){}
+                
+                break;
+            case RouterNodeUI.RAMN_REQUEST_PEERLIST:
+                for(int i = 0; i < routingTable.size(); i++)
+                {
+                    toConnection.println(routingTable.get(i).getUsername());
+                }
+                toConnection.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
+                break;
+            case RouterNodeUI.RAMN_REQUEST_ROUTER_DISCONNECT://WIP
+                try
+                {
+                    incConnection.close();
+                    toConnection.close();
+                    fromConnection.close();
+                }
+                catch(IOException ioe)
+                {}
+                break;
+            default:
+                break;
+        }
     }
 }

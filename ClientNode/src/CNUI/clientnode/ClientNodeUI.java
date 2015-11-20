@@ -20,6 +20,7 @@ package CNUI.clientnode;
 import java.io.*;
 import java.net.*;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 public class ClientNodeUI extends javax.swing.JFrame {
 
@@ -27,15 +28,16 @@ public class ClientNodeUI extends javax.swing.JFrame {
      * Creates new form ClientNodeUI
      */
     
-    /*The start of the RAMN_NET protocol.*/
-    public static final String RAMN_RESPONSE_OK = "OK";
-    public static final String RAMN_RESPONSE_ERROR = "ERROR";
-    public static final String RAMN_REPSONSE_DENIED = "DENIED";
+    //The RAMN_NET protocol definition
+    public static final String RAMN_RESPONSE_OK = "OK";//confirmation response
+    public static final String RAMN_RESPONSE_ERROR = "ERROR";//error in the request
+    public static final String RAMN_RESPONSE_DENIED = "DENIED";//request is denied: could add specific codes here and @RAMN_RESPONSE_ERROR
+    public static final String RAMN_TRANSFER_COMPLETE = "COMPLETE";
     public static final String RAMN_REQUEST_CONNECTION = "CON";//for connecting to a peer
     public static final String RAMN_REQUEST_DISCONNECT = "DCON";//for disconnection from a peer
-    public static final String RAMN_REQUEST_ROUTER_DISCONNECT = "RTDCON";
-    public static final String RAMN_REQUEST_REGISTER = "REGISTER";
-    public static final String RAMN_REQUEST_PEERLIST = "PEERS";
+    public static final String RAMN_REQUEST_ROUTER_DISCONNECT = "RTDCON";//for disconnecting from a router
+    public static final String RAMN_REQUEST_REGISTER = "REGISTER";//to attempt to register a new user
+    public static final String RAMN_REQUEST_PEERLIST = "PEERS";//to request all active connections
     
     public ClientNodeUI() {
         initComponents();
@@ -128,7 +130,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     .addComponent(routerIPTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(routerErrLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(connectRouterButton)
                 .addContainerGap())
         );
@@ -236,9 +238,9 @@ public class ClientNodeUI extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(7, 7, 7)
                 .addComponent(jScrollPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(connErrLabel)
@@ -324,7 +326,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -399,25 +401,20 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
         if(username.length() < 4 && username.length() > 32)
         {
-            styleErrLabel.setVisible(true);
             styleErrLabel.setEnabled(true);
+            styleErrLabel.setVisible(true);
             return;
         }
         
-        TODO: /*Get usernames from router
-        List nameList = new ArrayList();
-        Populating the list depends on how the names are being stored in the router
-        Possibilities: File read/write, For-each loop, While loop
-        }*/
-        
-        //if username is taken or contains illegal characters, error, return
-        //else, add username and update routing table
+        /*If name fails, we print to the error label the error message
+          else, add username and update routing table*/
         if(!username.matches(pattern))
         {
-            /*If name fails, we print to the error label the error message
+            styleErrLabel.setEnabled(true);
+            styleErrLabel.setVisible(true);
             styleErrLabel.setText("Invalid username: " + username);
             usernameTF.grabFocus();
-            */
+            return;
         }
         else
         {
@@ -427,12 +424,15 @@ public class ClientNodeUI extends javax.swing.JFrame {
             
             try
             {
+                Thread.sleep(1000);
                 String ramnResponse = fromRouter.readLine();
                 if(ramnResponse.equals(RAMN_RESPONSE_OK))
                 {
-                    //get users connected to the network
-                    //fill connectionListTA
-                    //enable connectionListTA, connectClientButton, and refreshClientButton
+                    /*Get users connected to the network,
+                      and allow users to proceed with connection.*/
+                    userJList.setEnabled(true);
+                    connectClientButton.setEnabled(true);
+                    refreshClientButton.setEnabled(true);
                     DefaultListModel list = new DefaultListModel();
                     while((ramnResponse = fromRouter.readLine()) != null) //This seems sorta weird test condition
                     {
@@ -440,8 +440,39 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     }
                     userJList.setModel(list);
                 }
+                else if(ramnResponse.equals(RAMN_RESPONSE_DENIED))
+                {
+                    JOptionPane.showMessageDialog(
+                    null,
+                    "Username already taken. Please try again.", 
+                    "Denied operation",
+                    JOptionPane.INFORMATION_MESSAGE);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(
+                    null,
+                    "Failed to register your username. Please try again.", 
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                }
             }
-            catch(IOException ioe){}
+            catch(IOException ioe)
+            {
+                JOptionPane.showMessageDialog(
+                    null,
+                    "Could not get active connections.", 
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+            catch(InterruptedException ie)
+            {
+                JOptionPane.showMessageDialog(
+                    null,
+                    ie.getMessage(), 
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_registerButtonActionPerformed
 
