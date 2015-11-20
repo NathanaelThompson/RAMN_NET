@@ -37,6 +37,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
     public static final String RAMN_REQUEST_ROUTER_DISCONNECT = "RTDCON";//for disconnecting from a router
     public static final String RAMN_REQUEST_REGISTER = "REGISTER";//to attempt to register a new user
     public static final String RAMN_REQUEST_PEERLIST = "PEERS";//to request all active connections
+    public static final String RAMN_REQUEST_IP = "RQIP";
     
     RoutingTableManager rtManager = new RoutingTableManager();
     /**

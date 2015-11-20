@@ -23,21 +23,40 @@ package RNUI.routernode;
 import java.net.*;
 
 public class RAMNConnection {
+    //for use with client to router connections
     String username;
     String ipAddress;
     Socket connection;
     
+    
+    
+    //for use with client to router connections
     public RAMNConnection()
     {
         username="";
         ipAddress="";
         connection=null;
     }
+    //for use with client to router connections
     public RAMNConnection(String user, String address, Socket s)
     {
         username = user;
         ipAddress = address;
         connection = s;
+    }
+    
+    //for use with client to client connections
+    String user1, user2;
+    String ip1, ip2;
+    
+    //for use with client to client connections
+    public RAMNConnection(String u1, String u2, String ip1, String ip2)
+    {
+        user1 = u1;
+        user2 = u2;
+        this.ip1 = ip1;
+        this.ip2 = ip2;
+        connection = null;
     }
     
     public String getUsername()

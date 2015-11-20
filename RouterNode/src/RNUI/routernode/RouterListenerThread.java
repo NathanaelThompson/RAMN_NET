@@ -24,6 +24,7 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+
 public class RouterListenerThread extends Thread{
     private Thread th;
     private final String threadName;
@@ -104,7 +105,53 @@ public class RouterListenerThread extends Thread{
         switch(input)
         {
             case RouterNodeUI.RAMN_REQUEST_CONNECTION://WIP
-                toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                Socket routerSocket = routingTable.get(0).getSocket();
+                BufferedReader fromRouter;
+                PrintWriter toRouter;
+                try
+                {
+                    //establish connection to neighboring router
+                    fromRouter = new BufferedReader(new InputStreamReader(routerSocket.getInputStream()));
+                    toRouter = new PrintWriter(routerSocket.getOutputStream(),true);
+                    
+                    //get the user requested
+                    String userRequested = fromConnection.readLine();
+                    String ipRequested = "x.x.x.x";
+                    
+                    //try to find user requested in local routing table
+                    for(int i = 0; i < routingTable.size();i++)
+                    {
+                        if(routingTable.get(i).getUsername().equals((userRequested)))
+                        {
+                            ipRequested = routingTable.get(i).getIPAddress();
+                        }
+                    }
+                    
+                    //if it wasn't found...
+                    if(ipRequested.equals("x.x.x.x"))
+                    {
+                        //...ask neighboring router to search
+                        toRouter.println(RouterNodeUI.RAMN_REQUEST_IP);
+                        toRouter.println(userRequested);
+                        ipRequested = fromRouter.readLine();
+                    }
+                    
+                    //if the neighboring router couldn't find it either...
+                    if(ipRequested.equals(RouterNodeUI.RAMN_RESPONSE_ERROR))
+                    {
+                        //...signal to client the connection wasn't found
+                        toConnection.println(RouterNodeUI.RAMN_RESPONSE_ERROR);
+                    }
+                    else
+                    {
+                        //otherwise, tell the client it's all good, and give them the requested IP address
+                        toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                    }
+                }
+                catch(IOException ioe)
+                {
+                    toConnection.println(RouterNodeUI.RAMN_RESPONSE_ERROR);
+                }
                 break;
             case RouterNodeUI.RAMN_REQUEST_DISCONNECT:
                 String userToDisconnect;

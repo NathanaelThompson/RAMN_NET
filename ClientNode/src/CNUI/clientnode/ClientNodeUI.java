@@ -38,6 +38,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
     public static final String RAMN_REQUEST_ROUTER_DISCONNECT = "RTDCON";//for disconnecting from a router
     public static final String RAMN_REQUEST_REGISTER = "REGISTER";//to attempt to register a new user
     public static final String RAMN_REQUEST_PEERLIST = "PEERS";//to request all active connections
+    public static final String RAMN_REQUEST_IP = "RQIP";
     
     public ClientNodeUI() {
         initComponents();
@@ -202,6 +203,11 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
         connectClientButton.setText("Connect");
         connectClientButton.setEnabled(false);
+        connectClientButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                connectClientButtonActionPerformed(evt);
+            }
+        });
 
         userJList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Usernames here!" };
@@ -342,9 +348,10 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         //Tell the router to remove this client from the routing table,
-        toRouter.println("RDCON");
+        //and close whatever streams are open,
         try
-        {            //and close whatever streams are open,
+        {            
+            toRouter.println("RDCON");
             sockToRouter.close();
             toRouter.close();
             fromRouter.close();
@@ -414,7 +421,6 @@ public class ClientNodeUI extends javax.swing.JFrame {
             styleErrLabel.setVisible(true);
             styleErrLabel.setText("Invalid username: " + username);
             usernameTF.grabFocus();
-            return;
         }
         else
         {
@@ -475,6 +481,48 @@ public class ClientNodeUI extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_registerButtonActionPerformed
+
+    private void connectClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectClientButtonActionPerformed
+        
+        try
+        {
+            int selectedUser = userJList.getSelectedIndex();
+            String userToConnect;
+            if(selectedUser==-1)
+            {
+                JOptionPane.showMessageDialog(
+                    null,
+                    "No user selected, please try again.", 
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            else
+            {
+                userToConnect = userJList.getSelectedValue().toString();
+            }
+            toRouter.println(RAMN_REQUEST_CONNECTION);
+            toRouter.println(userToConnect);
+            
+            if(fromRouter.readLine().equals(RAMN_RESPONSE_OK))
+            {
+                
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(
+                    null,
+                    "Error establishing connection\n. User may have disconnected, "
+                        + "please click \"Refresh\" to ensure user is still in RAMN_NET.", 
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        catch(IOException ioe)
+        {
+            
+        }
+    }//GEN-LAST:event_connectClientButtonActionPerformed
 
     /**
      * @param args the command line arguments
