@@ -430,17 +430,20 @@ public class ClientNodeUI extends javax.swing.JFrame {
             
             try
             {
-                Thread.sleep(1000);
+                //wait half a second for the router to process
+                Thread.sleep(500);
+                
                 String ramnResponse = fromRouter.readLine();
-                if(ramnResponse.equals(RAMN_RESPONSE_OK))
+                if(ramnResponse.equals(RAMN_RESPONSE_OK))//if registration went ok
                 {
                     /*Get users connected to the network,
                       and allow users to proceed with connection.*/
                     userJList.setEnabled(true);
                     connectClientButton.setEnabled(true);
                     refreshClientButton.setEnabled(true);
+                    
                     DefaultListModel list = new DefaultListModel();
-                    while((ramnResponse = fromRouter.readLine()) != null) //This seems sorta weird test condition
+                    while(!((ramnResponse = fromRouter.readLine()).equals(RAMN_TRANSFER_COMPLETE))) //While the transfer isn't complete
                     {
                         list.addElement(ramnResponse);
                     }
@@ -480,12 +483,16 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
             }
         }
+        
+        /*TODO: Launch a thread for client to receive incoming connections.
+        This thread should terminate once a connection between peers has been established.*/
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void connectClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectClientButtonActionPerformed
         
         try
         {
+            //get the index of the selected item and return if nothing is selected
             int selectedUser = userJList.getSelectedIndex();
             String userToConnect;
             if(selectedUser==-1)
@@ -501,12 +508,16 @@ public class ClientNodeUI extends javax.swing.JFrame {
             {
                 userToConnect = userJList.getSelectedValue().toString();
             }
+            
+            //tell the router to connect to a client
             toRouter.println(RAMN_REQUEST_CONNECTION);
             toRouter.println(userToConnect);
             
             if(fromRouter.readLine().equals(RAMN_RESPONSE_OK))
             {
-                
+                String ipToConnect = fromRouter.readLine();
+                sockToPeer = new Socket(ipToConnect, 8888);
+                //launch client comm thread
             }
             else
             {

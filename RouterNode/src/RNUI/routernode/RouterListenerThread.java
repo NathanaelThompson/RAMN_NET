@@ -121,9 +121,14 @@ public class RouterListenerThread extends Thread{
                     //try to find user requested in local routing table
                     for(int i = 0; i < routingTable.size();i++)
                     {
+                        //if user is found
                         if(routingTable.get(i).getUsername().equals((userRequested)))
                         {
+                            //tell the requestor, and return
                             ipRequested = routingTable.get(i).getIPAddress();
+                            toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                            toConnection.println(ipRequested);
+                            return;
                         }
                     }
                     
@@ -146,6 +151,7 @@ public class RouterListenerThread extends Thread{
                     {
                         //otherwise, tell the client it's all good, and give them the requested IP address
                         toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                        toConnection.println(ipRequested);
                     }
                 }
                 catch(IOException ioe)
@@ -186,6 +192,24 @@ public class RouterListenerThread extends Thread{
                 }
                 catch(IOException ioe)
                 {}
+                break;
+            case RouterNodeUI.RAMN_REQUEST_IP:
+                try
+                {
+                    for(int i = 0; i < routingTable.size(); i++)
+                    {
+                        if(routingTable.get(i).getUsername().equals(fromConnection.readLine()))
+                        {
+                            toConnection.println(routingTable.get(i).getIPAddress());
+                            return;
+                        }
+                    }
+                }
+                catch(IOException ioe)
+                {
+                    
+                }
+               
                 break;
             default:
                 break;
