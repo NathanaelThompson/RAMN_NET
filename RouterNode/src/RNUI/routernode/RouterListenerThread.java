@@ -69,7 +69,7 @@ public class RouterListenerThread extends Thread{
                 
             //...and convert it to a string
             byte[] ip4AddrBytes = i4Addr.getAddress();
-            String address = ip4AddrBytes.toString();
+            String address = new String(ip4AddrBytes);
                 
             //create a new RAMNConnection and add it to the routing table
             metaData = new RAMNConnection("RAMN_ROUTER", address, incConnection);
@@ -100,14 +100,15 @@ public class RouterListenerThread extends Thread{
     }
     public void makeResponse(String input)
     {
+        Socket routerSocket = routingTable.get(0).getSocket();
+        BufferedReader fromRouter;
+        PrintWriter toRouter;
+        
         if(input == null || input.isEmpty())
             return;
         switch(input)
         {
             case RouterNodeUI.RAMN_REQUEST_CONNECTION://WIP
-                Socket routerSocket = routingTable.get(0).getSocket();
-                BufferedReader fromRouter;
-                PrintWriter toRouter;
                 try
                 {
                     //establish connection to neighboring router
@@ -159,8 +160,9 @@ public class RouterListenerThread extends Thread{
                     toConnection.println(RouterNodeUI.RAMN_RESPONSE_ERROR);
                 }
                 break;
-            case RouterNodeUI.RAMN_REQUEST_DISCONNECT:
+            case RouterNodeUI.RAMN_REQUEST_DISCONNECT://when a peer wishes to disconnect from another peer
                 String userToDisconnect;
+                
                 try
                 {
                     userToDisconnect = fromConnection.readLine();
@@ -170,20 +172,27 @@ public class RouterListenerThread extends Thread{
                         {
                             routingTable.get(i).getSocket().close();
                             routingTable.set(i, null);
+                            return;//user found, return;
                         }
                     }
+                    
+                    //since the user wasn't found, have to poll neighbor router
+                    toRouter = new PrintWriter(routerSocket.getOutputStream(),true);
+                    toRouter.println(RouterNodeUI.RAMN_REQUEST_DISCONNECT);
+                    toRouter.println(userToDisconnect);
+                    
                 }
                 catch(IOException ioe){}
                 
                 break;
-            case RouterNodeUI.RAMN_REQUEST_PEERLIST:
+            case RouterNodeUI.RAMN_REQUEST_PEERLIST://When clients need to know who else is in the network
                 for(int i = 0; i < routingTable.size(); i++)
                 {
                     toConnection.println(routingTable.get(i).getUsername());
                 }
                 toConnection.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
                 break;
-            case RouterNodeUI.RAMN_REQUEST_ROUTER_DISCONNECT://WIP
+            case RouterNodeUI.RAMN_REQUEST_ROUTER_DISCONNECT://when a client wishes to disconnect from the router
                 try
                 {
                     incConnection.close();
@@ -193,7 +202,7 @@ public class RouterListenerThread extends Thread{
                 catch(IOException ioe)
                 {}
                 break;
-            case RouterNodeUI.RAMN_REQUEST_IP:
+            case RouterNodeUI.RAMN_REQUEST_IP://for whenever a client requests a connection located outside of its router
                 try
                 {
                     for(int i = 0; i < routingTable.size(); i++)

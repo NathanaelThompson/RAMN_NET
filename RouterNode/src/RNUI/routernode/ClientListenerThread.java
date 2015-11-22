@@ -68,7 +68,7 @@ public class ClientListenerThread extends Thread{
                 
                 //...and convert it to a string
                 byte[] ip4AddrBytes = i4Addr.getAddress();
-                String address = ip4AddrBytes.toString();
+                String address = new String(ip4AddrBytes);
                 
                 //create a new RAMNConnection and add it to the routing table
                 metaData = new RAMNConnection("RAMN_ROUTER", address, incConnection);

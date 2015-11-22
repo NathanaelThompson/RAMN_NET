@@ -270,6 +270,11 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
         sendButton.setText("Send");
         sendButton.setEnabled(false);
+        sendButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendButtonActionPerformed(evt);
+            }
+        });
 
         disconnButton.setText("Disconnect");
         disconnButton.setEnabled(false);
@@ -517,7 +522,8 @@ public class ClientNodeUI extends javax.swing.JFrame {
             {
                 String ipToConnect = fromRouter.readLine();
                 sockToPeer = new Socket(ipToConnect, 8888);
-                //launch client comm thread
+                toPeer = new PrintWriter(sockToPeer.getOutputStream(), true);
+                //launch client receive thread
             }
             else
             {
@@ -534,6 +540,10 @@ public class ClientNodeUI extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_connectClientButtonActionPerformed
+
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sendButtonActionPerformed
 
     /**
      * @param args the command line arguments

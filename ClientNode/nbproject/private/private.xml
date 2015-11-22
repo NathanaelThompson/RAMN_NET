@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Users/Nate/Documents/NetBeansProjects/ClientNode/src/CNUI/clientnode/ClientNodeUI.java</file>
             <file>file:/C:/Users/Nate/Documents/NetBeansProjects/ClientNode/src/CNUI/clientnode/ClientCommunicationThread.java</file>
+            <file>file:/C:/Users/Nate/Documents/NetBeansProjects/ClientNode/src/CNUI/clientnode/ClientReceiveThread.java</file>
         </group>
     </open-files>
 </project-private>
