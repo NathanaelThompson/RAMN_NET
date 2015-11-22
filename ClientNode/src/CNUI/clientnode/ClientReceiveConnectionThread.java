@@ -26,7 +26,7 @@ import java.net.*;
 
 public class ClientReceiveConnectionThread extends Thread{
     private Thread th;
-    private final String threadName;
+   // private final String threadName; //Robert commented out in order to run
     ServerSocket listenSocket;
     int listenPort;
 }

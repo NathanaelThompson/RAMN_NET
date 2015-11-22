@@ -265,14 +265,18 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 0), 1, true), "Chat Window"));
 
-        chatTA.setEnabled(false);
-        chatTA.setText("Text here!");
+        chatTA.setEditable(false);
 
         sendButton.setText("Send");
-        sendButton.setEnabled(false);
         sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendButtonActionPerformed(evt);
+            }
+        });
+
+        textToSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textToSendActionPerformed(evt);
             }
         });
 
@@ -543,7 +547,16 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         // TODO add your handling code here:
+        String inputData = textToSend.getText();
+        chatTA.append(inputData + "\n");
+        textToSend.setText("");
+        
     }//GEN-LAST:event_sendButtonActionPerformed
+
+    private void textToSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textToSendActionPerformed
+        // TODO add your handling code here:
+        sendButtonActionPerformed(evt);
+    }//GEN-LAST:event_textToSendActionPerformed
 
     /**
      * @param args the command line arguments
