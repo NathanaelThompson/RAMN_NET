@@ -458,7 +458,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     }
                     userJList.setModel(list);
                 }
-                else if(ramnResponse.equals(RAMN_RESPONSE_DENIED))
+                else if(ramnResponse.equals(RAMN_RESPONSE_DENIED))//if denied
                 {
                     JOptionPane.showMessageDialog(
                     null,
@@ -466,7 +466,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     "Denied operation",
                     JOptionPane.INFORMATION_MESSAGE);
                 }
-                else
+                else //otherwise, error out
                 {
                     JOptionPane.showMessageDialog(
                     null,
@@ -493,8 +493,11 @@ public class ClientNodeUI extends javax.swing.JFrame {
             }
         }
         
-        /*TODO: Launch a thread for client to receive incoming connections.
-        This thread should terminate once a connection between peers has been established.*/
+        /*Launch a thread for client to receive incoming connections,
+        and receive incoming communication from those connections.*/
+        
+        ClientReceiveThread crt = new ClientReceiveThread("Client-Side LT", 9999, chatTA);
+        crt.CRTStart();
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void connectClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectClientButtonActionPerformed
@@ -546,9 +549,10 @@ public class ClientNodeUI extends javax.swing.JFrame {
     }//GEN-LAST:event_connectClientButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
-        // TODO add your handling code here:
-        String inputData = textToSend.getText();
-        chatTA.append(inputData + "\n");
+        //send message to peer and clear the text field
+        String inputData = textToSend.getText() + "\n";
+        chatTA.append(inputData);
+        toPeer.println(inputData);
         textToSend.setText("");
         
     }//GEN-LAST:event_sendButtonActionPerformed

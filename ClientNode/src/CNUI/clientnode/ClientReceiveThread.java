@@ -24,7 +24,6 @@ package CNUI.clientnode;
 import java.io.*;
 import java.net.*;
 import java.awt.TextArea;
-import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
 
 public class ClientReceiveThread extends Thread{
@@ -53,30 +52,44 @@ public class ClientReceiveThread extends Thread{
     @Override
     public void run()
     {
+        try
+        {
+            //open the listening socket
+            listenSocket = new ServerSocket(listenPort);
+        }
+        catch(IOException ioe)
+        {
+            
+        }
         while(true)
         {
             try
             {
-                listenSocket = new ServerSocket(listenPort);
                 commSocket = new Socket();
+                
+                //accept() inc connection
                 commSocket = listenSocket.accept();
+                
+                //get confirmation from the user
                 int confirmation = JOptionPane.showConfirmDialog(null,
                         "Incoming connection, would you like to accept?",
                         "Confirm Connection", JOptionPane.YES_NO_OPTION);
 
+                //if confirmed...
                 if(confirmation == JOptionPane.YES_OPTION)
                 {
-                    
+                    //...do I/O while connected
                     fromPeer = new BufferedReader(new InputStreamReader(commSocket.getInputStream()));
                     String msgReceived;
                     while(commSocket.isConnected())
                     {
                         msgReceived = fromPeer.readLine();
-                        chatArea.append("> " +msgReceived + '\n');
+                        chatArea.append("Received > " + msgReceived);
                     }
                 }
-                else
+                else //otherwise...
                 {
+                    //close the comm socket
                     commSocket.close();
                     commSocket = null;
                 }
