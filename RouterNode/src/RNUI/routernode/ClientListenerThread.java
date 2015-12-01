@@ -31,6 +31,8 @@ public class ClientListenerThread extends Thread{
     private ServerSocket listenSocket;
     private final int listenPort;
     ArrayList<RAMNConnection> routingTable;
+    BufferedReader fromClient;
+    PrintWriter toClient;
     
     public ClientListenerThread(String t_name, int port, ArrayList<RAMNConnection> rt)
     {
@@ -61,6 +63,9 @@ public class ClientListenerThread extends Thread{
                 listenSocket = new ServerSocket(listenPort);
                 incConnection = listenSocket.accept();
                 
+                toClient = new PrintWriter(incConnection.getOutputStream(),true);
+                fromClient = new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
+                
                 //get the remote socket address...
                 InetSocketAddress sockAddr = (InetSocketAddress)incConnection.getRemoteSocketAddress();
                 InetAddress iAddress = sockAddr.getAddress();
@@ -70,9 +75,25 @@ public class ClientListenerThread extends Thread{
                 byte[] ip4AddrBytes = i4Addr.getAddress();
                 String address = new String(ip4AddrBytes);
                 
-                //create a new RAMNConnection and add it to the routing table
-                metaData = new RAMNConnection("RAMN_ROUTER", address, incConnection);
-                routingTable.add(metaData);
+                String potentialUser = fromClient.readLine();
+                boolean failFlag= false;
+                for(int i = 0; i<routingTable.size(); i++)
+                {
+                    if(routingTable.get(i).getUsername().equals(potentialUser))
+                    {
+                        toClient.println(RouterNodeUI.RAMN_RESPONSE_DENIED);
+                        failFlag = true;
+                        break;
+                    }
+                }
+                if(!failFlag)
+                {
+                     //create a new RAMNConnection and add it to the routing table
+                    metaData = new RAMNConnection(potentialUser, address, incConnection);
+                    routingTable.add(metaData);
+                    toClient.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                }
+               
             }
             catch(IOException ioe){}
         }

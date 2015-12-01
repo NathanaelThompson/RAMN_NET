@@ -334,6 +334,8 @@ public class RouterNodeUI extends javax.swing.JFrame {
     private void listenClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listenClientButtonActionPerformed
         // TODO add your handling code here:
         //start a new thread to listen for clients
+        ClientListenerThread clt = new ClientListenerThread("Client-Listing-Thread", 9999, rtManager.routingTable);
+        clt.listenStart();
     }//GEN-LAST:event_listenClientButtonActionPerformed
 
     /**
