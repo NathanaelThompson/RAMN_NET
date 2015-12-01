@@ -25,23 +25,19 @@ import java.net.*;
 public class RAMNConnection {
     //for use with client to router connections
     String username;
-    String ipAddress;
     Socket connection;
     
     
-    
-    //for use with client to router connections
+    //default constructor
     public RAMNConnection()
     {
         username="";
-        ipAddress="";
         connection=null;
     }
     //for use with client to router connections
-    public RAMNConnection(String user, String address, Socket s)
+    public RAMNConnection(String user, Socket s)
     {
         username = user;
-        ipAddress = address;
         connection = s;
     }
     
@@ -50,12 +46,10 @@ public class RAMNConnection {
     String ip1, ip2;
     
     //for use with client to client connections
-    public RAMNConnection(String u1, String u2, String ip1, String ip2)
+    public RAMNConnection(String u1, String u2)
     {
         user1 = u1;
         user2 = u2;
-        this.ip1 = ip1;
-        this.ip2 = ip2;
         connection = null;
     }
     
@@ -66,15 +60,6 @@ public class RAMNConnection {
     public void setUsername(String user)
     {
         username = user;
-    }
-    
-    public String getIPAddress()
-    {
-        return ipAddress;
-    }
-    public void setIPAddress(String address)
-    {
-        ipAddress = address;
     }
     
     public Socket getSocket()

@@ -24,6 +24,7 @@ package RNUI.routernode;
 
 import java.io.*;
 import java.net.*;
+import javax.swing.DefaultListModel;
 
 public class RouterNodeUI extends javax.swing.JFrame {
     
@@ -39,6 +40,11 @@ public class RouterNodeUI extends javax.swing.JFrame {
     public static final String RAMN_REQUEST_PEERLIST = "PEERS";//to request all active connections
     public static final String RAMN_REQUEST_IP = "RQIP";
     
+    public static boolean IS_NEIGHBOR_CONNECTED;//true when a router is connected to this router
+    public static boolean getNeighborConnected()
+    {
+        return IS_NEIGHBOR_CONNECTED;
+    }
     RoutingTableManager rtManager = new RoutingTableManager();
     /**
      * Creates new form RouterNodeUI
@@ -67,7 +73,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         listenPortTF = new javax.swing.JTextField();
         invalidPortErr = new javax.swing.JLabel();
         connectPanel = new javax.swing.JPanel();
-        connectStartButton = new javax.swing.JButton();
+        startConnectButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         connPortTF = new javax.swing.JTextField();
         invalidConnPortErr = new javax.swing.JLabel();
@@ -76,7 +82,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         invalidIPErr = new javax.swing.JLabel();
         exitButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        textArea1 = new java.awt.TextArea();
+        activeUsersTA = new java.awt.TextArea();
         listenClientButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -130,10 +136,10 @@ public class RouterNodeUI extends javax.swing.JFrame {
 
         connectPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 155, 0)), "Connect To Router"));
 
-        connectStartButton.setText("Start");
-        connectStartButton.addActionListener(new java.awt.event.ActionListener() {
+        startConnectButton.setText("Start");
+        startConnectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                connectStartButtonActionPerformed(evt);
+                startConnectButtonActionPerformed(evt);
             }
         });
 
@@ -163,7 +169,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
                                 .addGap(32, 32, 32)
                                 .addGroup(connectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(connectPanelLayout.createSequentialGroup()
-                                        .addComponent(connectStartButton)
+                                        .addComponent(startConnectButton)
                                         .addGap(0, 0, Short.MAX_VALUE))
                                     .addGroup(connectPanelLayout.createSequentialGroup()
                                         .addComponent(invalidConnPortErr, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -195,7 +201,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(invalidConnPortErr)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(connectStartButton))
+                .addComponent(startConnectButton))
         );
 
         exitButton.setText("Exit");
@@ -222,12 +228,12 @@ public class RouterNodeUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
-                .addComponent(textArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(activeUsersTA, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(textArea1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+            .addComponent(activeUsersTA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -282,13 +288,13 @@ public class RouterNodeUI extends javax.swing.JFrame {
         catch(NumberFormatException nfe)
         {    
             invalidPortErr.setVisible(true);
-            listenPort = 9999;
+            listenPort = 5555;
         }
         
         if(listenPort <1024 || listenPort > 65534)
         {
             invalidPortErr.setVisible(true);
-            listenPort = 9999;
+            listenPort = 5555;
         }
         
         RouterListenerThread rlt = new RouterListenerThread("ListenForRouter", listenPort, rtManager.routingTable);
@@ -296,7 +302,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
     }//GEN-LAST:event_startListenButtonActionPerformed
 
     Socket routerConnSocket = null;
-    private void connectStartButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectStartButtonActionPerformed
+    private void startConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startConnectButtonActionPerformed
         int connPort;
         String ipAddress = null;
         
@@ -329,12 +335,12 @@ public class RouterNodeUI extends javax.swing.JFrame {
         {
             invalidConnPortErr.setVisible(true);
         }
-    }//GEN-LAST:event_connectStartButtonActionPerformed
+    }//GEN-LAST:event_startConnectButtonActionPerformed
 
     private void listenClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listenClientButtonActionPerformed
         // TODO add your handling code here:
         //start a new thread to listen for clients
-        ClientListenerThread clt = new ClientListenerThread("Client-Listing-Thread", 9999, rtManager.routingTable);
+        ClientListenerThread clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable, activeUsersTA);
         clt.listenStart();
     }//GEN-LAST:event_listenClientButtonActionPerformed
 
@@ -374,9 +380,9 @@ public class RouterNodeUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.TextArea activeUsersTA;
     private javax.swing.JTextField connPortTF;
     private javax.swing.JPanel connectPanel;
-    private javax.swing.JButton connectStartButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JLabel invalidConnPortErr;
     private javax.swing.JLabel invalidIPErr;
@@ -389,7 +395,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton listenClientButton;
     private javax.swing.JTextField listenPortTF;
+    private javax.swing.JButton startConnectButton;
     private javax.swing.JButton startListenButton;
-    private java.awt.TextArea textArea1;
     // End of variables declaration//GEN-END:variables
 }

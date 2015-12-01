@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Nate
+ * Copyright (C) 2015 Nathanael Thompson
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,23 +24,43 @@ package RNUI.routernode;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.awt.TextArea;
 
 public class ClientListenerThread extends Thread{
     private Thread th;
     private final String threadName;
     private ServerSocket listenSocket;
-    private final int listenPort;
+    private int listenPort;
     ArrayList<RAMNConnection> routingTable;
-    BufferedReader fromClient;
-    PrintWriter toClient;
+    BufferedReader fromClient, fromRouter;
+    PrintWriter toClient, toRouter;
+    Socket neighborSocket;
     
-    public ClientListenerThread(String t_name, int port, ArrayList<RAMNConnection> rt)
+    TextArea userList;
+    
+    public ClientListenerThread(String t_name, int port, ArrayList<RAMNConnection> rt, TextArea ta)
     {
         threadName = t_name;
         listenPort = port;
         routingTable = rt;
+        userList = ta;
+        
     }
     
+    public void setNeighborSocket(Socket s)
+    {
+        neighborSocket = s;
+        try
+        {
+            toRouter = new PrintWriter(neighborSocket.getOutputStream(), true);
+            fromRouter = new BufferedReader(new InputStreamReader(neighborSocket.getInputStream()));
+        }
+        catch(IOException ioe)
+        {
+                
+        }
+    }
+        
     public void listenStart()
     {
         if(th == null)
@@ -53,27 +73,25 @@ public class ClientListenerThread extends Thread{
     @Override
     public void run()
     {
-        while(true)
-        {
+      
+        
             Socket incConnection;
             RAMNConnection metaData;
-            
+            ClientListenerThread clt;
             try
             {
+                //get incoming connection
                 listenSocket = new ServerSocket(listenPort);
                 incConnection = listenSocket.accept();
                 
+                //in the event multiple clients are simultaneously connecting, we try to service them as soon as possible
+                //also, the port must be adjusted for unique connections
+                listenPort+=1;
+                clt = new ClientListenerThread("CLT (stacked)", listenPort, routingTable, userList);
+                clt.listenStart();
+                
                 toClient = new PrintWriter(incConnection.getOutputStream(),true);
                 fromClient = new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
-                
-                //get the remote socket address...
-                InetSocketAddress sockAddr = (InetSocketAddress)incConnection.getRemoteSocketAddress();
-                InetAddress iAddress = sockAddr.getAddress();
-                Inet4Address i4Addr = (Inet4Address)iAddress;
-                
-                //...and convert it to a string
-                byte[] ip4AddrBytes = i4Addr.getAddress();
-                String address = new String(ip4AddrBytes);
                 
                 String potentialUser = fromClient.readLine();
                 boolean failFlag= false;
@@ -89,13 +107,48 @@ public class ClientListenerThread extends Thread{
                 if(!failFlag)
                 {
                      //create a new RAMNConnection and add it to the routing table
-                    metaData = new RAMNConnection(potentialUser, address, incConnection);
+                    metaData = new RAMNConnection(potentialUser, incConnection);
                     routingTable.add(metaData);
                     toClient.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                    
+                    //display the user in the active connections
+                    userList.append(potentialUser+'\n');
+                   
+                    //print connections to client
+                    if(RouterNodeUI.IS_NEIGHBOR_CONNECTED)
+                    {
+                        //get connections from neighbor router
+                        toRouter.println(RouterNodeUI.RAMN_REQUEST_PEERLIST);
+                        String user;
+                        while(!((user=fromRouter.readLine()).equals(RouterNodeUI.RAMN_TRANSFER_COMPLETE)))
+                        {
+                            toClient.println(user);
+                        }
+                    
+                        //get connections for this router's routing table
+                        for(int i = 0; i < routingTable.size(); i++)
+                        {
+                            user = routingTable.get(i).getUsername();
+                            toClient.println(user);
+                        }
+                    }
+                    else
+                    {
+                        //get connections for this router's routing table
+                        String user;
+                        for(int i = 0; i < routingTable.size(); i++)
+                        {
+                            user = routingTable.get(i).getUsername();
+                            toClient.println(user);
+                        }
+                    }
+                    toClient.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
                 }
-               
             }
-            catch(IOException ioe){}
-        }
+            catch(IOException ioe)
+            {
+                ioe.printStackTrace();
+            }
+        
     }
 }

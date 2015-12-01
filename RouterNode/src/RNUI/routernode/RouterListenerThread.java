@@ -61,18 +61,9 @@ public class RouterListenerThread extends Thread{
             incConnection = listenSocket.accept();
             toConnection= new PrintWriter(incConnection.getOutputStream(),true);
             fromConnection= new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
-            
-            //get the remote socket address...
-            InetSocketAddress sockAddr = (InetSocketAddress)incConnection.getRemoteSocketAddress();
-            InetAddress iAddress = sockAddr.getAddress();
-            Inet4Address i4Addr = (Inet4Address)iAddress;
-                
-            //...and convert it to a string
-            byte[] ip4AddrBytes = i4Addr.getAddress();
-            String address = new String(ip4AddrBytes);
                 
             //create a new RAMNConnection and add it to the routing table
-            metaData = new RAMNConnection("RAMN_ROUTER", address, incConnection);
+            metaData = new RAMNConnection("RAMN_ROUTER", incConnection);
             routingTable.add(metaData);
         }
         catch(IOException ioe)
@@ -126,7 +117,7 @@ public class RouterListenerThread extends Thread{
                         if(routingTable.get(i).getUsername().equals((userRequested)))
                         {
                             //tell the requestor, and return
-                            ipRequested = routingTable.get(i).getIPAddress();
+                            ipRequested = routingTable.get(i).getSocket().getRemoteSocketAddress().toString();
                             toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
                             toConnection.println(ipRequested);
                             return;
@@ -171,7 +162,7 @@ public class RouterListenerThread extends Thread{
                         if(routingTable.get(i).getUsername().equals(userToDisconnect))
                         {
                             routingTable.get(i).getSocket().close();
-                            routingTable.set(i, null);
+                            routingTable.remove(i);
                             return;//user found, return;
                         }
                     }
@@ -209,7 +200,7 @@ public class RouterListenerThread extends Thread{
                     {
                         if(routingTable.get(i).getUsername().equals(fromConnection.readLine()))
                         {
-                            toConnection.println(routingTable.get(i).getIPAddress());
+                            toConnection.println(routingTable.get(i).getSocket().getRemoteSocketAddress().toString());
                             return;
                         }
                     }

@@ -432,7 +432,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
         }
         else
         {
-            toRouter.println(RAMN_REQUEST_REGISTER);
+            //toRouter.println(RAMN_REQUEST_REGISTER);
             toRouter.println(username);
             toRouter.flush();
             
