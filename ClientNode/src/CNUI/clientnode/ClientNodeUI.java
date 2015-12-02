@@ -438,9 +438,6 @@ public class ClientNodeUI extends javax.swing.JFrame {
             
             try
             {
-                //wait half a second for the router to process
-                Thread.sleep(500);
-                
                 String ramnResponse = fromRouter.readLine();
                 if(ramnResponse.equals(RAMN_RESPONSE_OK))//if registration went ok
                 {
@@ -479,14 +476,6 @@ public class ClientNodeUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(
                     null,
                     "Could not get active connections.", 
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            }
-            catch(InterruptedException ie)
-            {
-                JOptionPane.showMessageDialog(
-                    null,
-                    ie.getMessage(), 
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
             }
@@ -549,7 +538,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         //send message to peer and clear the text field
-        String inputData = textToSend.getText() + "\n";
+        String inputData = textToSend.getText() + '\n';
         chatTA.append(inputData);
         toPeer.println(inputData);
         textToSend.setText("");

@@ -24,7 +24,6 @@ package RNUI.routernode;
 
 import java.io.*;
 import java.net.*;
-import javax.swing.DefaultListModel;
 
 public class RouterNodeUI extends javax.swing.JFrame {
     
@@ -40,11 +39,6 @@ public class RouterNodeUI extends javax.swing.JFrame {
     public static final String RAMN_REQUEST_PEERLIST = "PEERS";//to request all active connections
     public static final String RAMN_REQUEST_IP = "RQIP";
     
-    public static boolean IS_NEIGHBOR_CONNECTED;//true when a router is connected to this router
-    public static boolean getNeighborConnected()
-    {
-        return IS_NEIGHBOR_CONNECTED;
-    }
     RoutingTableManager rtManager = new RoutingTableManager();
     /**
      * Creates new form RouterNodeUI
@@ -84,6 +78,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         activeUsersTA = new java.awt.TextArea();
         listenClientButton = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RAMN_Router");
@@ -101,7 +96,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
 
         invalidPortErr.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
         invalidPortErr.setForeground(new java.awt.Color(255, 0, 0));
-        invalidPortErr.setText("*invalid port, assigned to port 9999");
+        invalidPortErr.setText("*invalid port, assigned to port 5555");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -147,7 +142,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
 
         invalidConnPortErr.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
         invalidConnPortErr.setForeground(new java.awt.Color(255, 0, 0));
-        invalidConnPortErr.setText("*invalid port, assigned to port 9999");
+        invalidConnPortErr.setText("*invalid port, assigned to port 5555");
 
         jLabel3.setText("Port #:");
 
@@ -220,24 +215,37 @@ public class RouterNodeUI extends javax.swing.JFrame {
             }
         });
 
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(listenClientButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
                 .addComponent(activeUsersTA, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(activeUsersTA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(245, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(activeUsersTA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -314,18 +322,28 @@ public class RouterNodeUI extends javax.swing.JFrame {
         catch(NumberFormatException nfe)
         {    
             invalidConnPortErr.setVisible(true);
-            connPort = 9999;
+            connPort = 5555;
         }
         
         if(connPort <1024 || connPort > 65534)
         {
             invalidConnPortErr.setVisible(true);
-            connPort = 9999;
+            connPort = 5555;
         }
         
         try
         {
             routerConnSocket = new Socket(ipAddress, connPort);
+            if(clt != null)
+            {
+                clt.setNeighborSocket(routerConnSocket);
+            }
+            else
+            {
+                clt = new ClientListenerThread();
+                clt.setNeighborSocket(routerConnSocket);
+                
+            }
         }
         catch(IOException ioe)
         {
@@ -337,12 +355,37 @@ public class RouterNodeUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_startConnectButtonActionPerformed
 
+    ClientListenerThread clt = null;
     private void listenClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listenClientButtonActionPerformed
-        // TODO add your handling code here:
         //start a new thread to listen for clients
-        ClientListenerThread clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable, activeUsersTA);
-        clt.listenStart();
+        if(clt != null)
+        {
+            clt.setName("Client-Listening-Thread");
+            clt.setListenPort(5555);
+            clt.setRoutingTable(rtManager.routingTable);
+        }
+        else
+        {
+            clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable);
+            clt.listenStart();
+            if(routerConnSocket != null)
+            {
+                clt.setNeighborSocket(routerConnSocket);
+            }
+            else if(rtManager.routingTable.get(0) != null)//this line of code assumes the routers are connecting first
+            {
+                clt.setNeighborSocket(rtManager.routingTable.get(0).getSocket());
+            }
+        }
     }//GEN-LAST:event_listenClientButtonActionPerformed
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        activeUsersTA.setText("");
+        for(int i = 0; i < rtManager.routingTable.size(); i++)
+        {
+            activeUsersTA.append(rtManager.routingTable.get(i).getUsername() + '\n');
+        }
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -395,6 +438,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton listenClientButton;
     private javax.swing.JTextField listenPortTF;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JButton startConnectButton;
     private javax.swing.JButton startListenButton;
     // End of variables declaration//GEN-END:variables
