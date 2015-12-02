@@ -387,7 +387,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
     private void connectRouterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectRouterButtonActionPerformed
         
         String routerIP = routerIPTF.getText();
-        int portNum = 9999;
+        int portNum = 5555;
         
         try
         {
@@ -489,7 +489,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
         /*Launch a thread for client to receive incoming connections,
         and receive incoming communication from those connections.*/
         
-        ClientReceiveThread crt = new ClientReceiveThread("Client-Side LT", 9999, chatTA);
+        ClientReceiveThread crt = new ClientReceiveThread("Client-Side LT", 5555, chatTA);
         crt.CRTStart();
     }//GEN-LAST:event_registerButtonActionPerformed
 
