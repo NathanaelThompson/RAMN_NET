@@ -156,6 +156,44 @@ public class ClientListenerThread extends Thread{
                 }
                 toClient.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
             }
+            while(incConnection.isConnected())
+            {
+                String input;
+                input = fromClient.readLine();
+                switch(input)
+                {
+                    case RouterNodeUI.RAMN_REQUEST_PEERLIST:
+                        //print connections to client
+                        if (neighborSocket != null) 
+                        {
+                            //get connections from neighbor router
+                            toRouter.println(RouterNodeUI.RAMN_REQUEST_PEERLIST);
+                            String user;
+                            while (!((user = fromRouter.readLine()).equals(RouterNodeUI.RAMN_TRANSFER_COMPLETE))) 
+                            {
+                                toClient.println(user);
+                            }
+
+                            //get connections for this router's routing table
+                            for (int i = 0; i < routingTable.size(); i++) 
+                            {
+                                user = routingTable.get(i).getUsername();
+                                toClient.println(user);
+                            }
+                        }        
+                        else 
+                        {
+                            //get connections for this router's routing table
+                            String user;
+                            for (int i = 0; i < routingTable.size(); i++)
+                            {
+                                user = routingTable.get(i).getUsername();
+                                toClient.println(user);
+                            }
+                        }
+                        toClient.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
+                }    
+            }
         } 
         catch (IOException ioe) 
         {

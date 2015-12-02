@@ -224,6 +224,11 @@ public class ClientNodeUI extends javax.swing.JFrame {
 
         refreshClientButton.setText("Refresh");
         refreshClientButton.setEnabled(false);
+        refreshClientButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshClientButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -549,6 +554,24 @@ public class ClientNodeUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         sendButtonActionPerformed(evt);
     }//GEN-LAST:event_textToSendActionPerformed
+
+    private void refreshClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshClientButtonActionPerformed
+        toRouter.println(RAMN_REQUEST_PEERLIST);
+        DefaultListModel list = new DefaultListModel();
+        String ramnResponse;
+        try
+        {
+            while (!((ramnResponse = fromRouter.readLine()).equals(RAMN_TRANSFER_COMPLETE))) //While the transfer isn't complete
+            {
+                list.addElement(ramnResponse);
+            }
+            userJList.setModel(list);
+        }
+        catch(IOException ioe)
+        {
+            
+        }
+    }//GEN-LAST:event_refreshClientButtonActionPerformed
 
     /**
      * @param args the command line arguments

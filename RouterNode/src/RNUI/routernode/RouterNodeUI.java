@@ -178,7 +178,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
                         .addGroup(connectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(invalidIPErr)
                             .addComponent(ipTF, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(142, Short.MAX_VALUE))))
         );
         connectPanelLayout.setVerticalGroup(
             connectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,7 +231,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(listenClientButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
                     .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
                 .addComponent(activeUsersTA, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -371,10 +371,6 @@ public class RouterNodeUI extends javax.swing.JFrame {
             if(routerConnSocket != null)
             {
                 clt.setNeighborSocket(routerConnSocket);
-            }
-            else if(rtManager.routingTable.get(0) != null)//this line of code assumes the routers are connecting first
-            {
-                clt.setNeighborSocket(rtManager.routingTable.get(0).getSocket());
             }
         }
     }//GEN-LAST:event_listenClientButtonActionPerformed

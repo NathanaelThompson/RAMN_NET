@@ -195,7 +195,7 @@
                               <Component id="invalidIPErr" min="-2" max="-2" attributes="0"/>
                               <Component id="ipTF" alignment="0" min="-2" pref="167" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="142" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -303,7 +303,7 @@
                       <Component id="listenClientButton" pref="155" max="32767" attributes="0"/>
                       <Component id="refreshButton" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="214" max="32767" attributes="0"/>
+                  <EmptySpace pref="172" max="32767" attributes="0"/>
                   <Component id="activeUsersTA" min="-2" pref="373" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
