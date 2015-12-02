@@ -240,11 +240,10 @@ public class RouterNodeUI extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(listenClientButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(245, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(activeUsersTA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(activeUsersTA, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -309,7 +308,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         rlt.listenStart();
     }//GEN-LAST:event_startListenButtonActionPerformed
 
-    Socket routerConnSocket = null;
+    public static Socket routerConnSocket = null;
     private void startConnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startConnectButtonActionPerformed
         int connPort;
         String ipAddress = null;
@@ -363,16 +362,18 @@ public class RouterNodeUI extends javax.swing.JFrame {
             clt.setName("Client-Listening-Thread");
             clt.setListenPort(5555);
             clt.setRoutingTable(rtManager.routingTable);
+            
         }
         else
         {
             clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable);
-            clt.listenStart();
+            
             if(routerConnSocket != null)
             {
                 clt.setNeighborSocket(routerConnSocket);
             }
         }
+        clt.listenStart();
     }//GEN-LAST:event_listenClientButtonActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed

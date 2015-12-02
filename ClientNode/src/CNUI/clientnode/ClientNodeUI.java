@@ -389,23 +389,27 @@ public class ClientNodeUI extends javax.swing.JFrame {
         String routerIP = routerIPTF.getText();
         int portNum = 5555;
         
-        try
+        for(int i = 0; i < 100; i++)
         {
-            sockToRouter = new Socket(routerIP, portNum);
-            toRouter = new PrintWriter(sockToRouter.getOutputStream(),true);
-            fromRouter = new BufferedReader(new InputStreamReader(sockToRouter.getInputStream()));
-            usernameTF.setEnabled(true);
-            registerButton.setEnabled(true);
-        }
-        catch(UnknownHostException e)
-        {
-            routerErrLabel.setVisible(true);
-            routerErrLabel.setEnabled(true);
-        }
-        catch(IOException ioe)
-        {
-            routerErrLabel.setVisible(true);
-            routerErrLabel.setEnabled(true);
+            try 
+            {
+                sockToRouter = new Socket();
+                sockToRouter.connect(new InetSocketAddress(routerIP, (portNum+i)), 1000);
+                toRouter = new PrintWriter(sockToRouter.getOutputStream(), true);
+                fromRouter = new BufferedReader(new InputStreamReader(sockToRouter.getInputStream()));
+                usernameTF.setEnabled(true);
+                registerButton.setEnabled(true);
+            } 
+            catch (UnknownHostException e) 
+            {
+                routerErrLabel.setVisible(true);
+                routerErrLabel.setEnabled(true);
+            } 
+            catch (IOException ioe) 
+            {
+                routerErrLabel.setVisible(true);
+                routerErrLabel.setEnabled(true);
+            }
         }
         
     }//GEN-LAST:event_connectRouterButtonActionPerformed

@@ -34,6 +34,7 @@ public class ClientListenerThread extends Thread{
     BufferedReader fromClient, fromRouter;
     PrintWriter toClient, toRouter;
     Socket neighborSocket = null;
+    ClientListenerThread clt = null;
     
     public ClientListenerThread()
     {
@@ -82,6 +83,10 @@ public class ClientListenerThread extends Thread{
     {
         if(th == null)
         {
+            if(RouterNodeUI.routerConnSocket != null)
+            {
+                setNeighborSocket(RouterNodeUI.routerConnSocket);
+            }
             th = new Thread(this, threadName);
             th.start();
         }
@@ -92,7 +97,7 @@ public class ClientListenerThread extends Thread{
     {
         Socket incConnection;
         RAMNConnection metaData;
-        ClientListenerThread clt;
+        
         try 
         {
             //get incoming connection
