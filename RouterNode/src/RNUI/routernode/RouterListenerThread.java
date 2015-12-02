@@ -62,6 +62,7 @@ public class RouterListenerThread extends Thread{
             toConnection= new PrintWriter(incConnection.getOutputStream(),true);
             fromConnection= new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
                 
+            RouterNodeUI.routerConnSocket = incConnection;
             //create a new RAMNConnection and add it to the routing table
             metaData = new RAMNConnection("RAMN_ROUTER_CONNECTOR", incConnection);
             routingTable.add(metaData);
