@@ -65,6 +65,7 @@ public class RouterListenerThread extends Thread{
             RouterNodeUI.routerConnSocket = incConnection;
             //create a new RAMNConnection and add it to the routing table
             metaData = new RAMNConnection("RAMN_ROUTER_CONNECTOR", incConnection);
+            //add "RAMN_ROUTER_LISTENER"
             routingTable.add(metaData);
         }
         catch(IOException ioe)
@@ -91,11 +92,7 @@ public class RouterListenerThread extends Thread{
         }
     }
     public void makeResponse(String input)
-    {
-        Socket routerSocket = RouterNodeUI.routerConnSocket;
-        BufferedReader fromRouter;
-        PrintWriter toRouter;
-        
+    {   
         if(input == null || input.isEmpty())
             return;
         switch(input)
@@ -103,10 +100,6 @@ public class RouterListenerThread extends Thread{
             case RouterNodeUI.RAMN_REQUEST_CONNECTION://WIP
                 try
                 {
-                    //establish connection to neighboring router
-                    fromRouter = new BufferedReader(new InputStreamReader(routerSocket.getInputStream()));
-                    toRouter = new PrintWriter(routerSocket.getOutputStream(),true);
-                    
                     //get the user requested
                     String userRequested = fromConnection.readLine();
                     String ipRequested = "x.x.x.x";
@@ -129,9 +122,9 @@ public class RouterListenerThread extends Thread{
                     if(ipRequested.equals("x.x.x.x"))
                     {
                         //...ask neighboring router to search
-                        toRouter.println(RouterNodeUI.RAMN_REQUEST_IP);
-                        toRouter.println(userRequested);
-                        ipRequested = fromRouter.readLine();
+                        toConnection.println(RouterNodeUI.RAMN_REQUEST_IP);
+                        toConnection.println(userRequested);
+                        ipRequested = fromConnection.readLine();
                     }
                     
                     //if the neighboring router couldn't find it either...

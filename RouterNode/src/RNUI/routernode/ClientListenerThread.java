@@ -42,11 +42,21 @@ public class ClientListenerThread extends Thread{
         listenPort = -1;
         routingTable = null;
     }
-    public ClientListenerThread(String t_name, int port, ArrayList<RAMNConnection> rt)
+    public ClientListenerThread(String t_name, int port, ArrayList<RAMNConnection> rt, Socket routerToRouterSocket)
     {
         threadName = t_name;
         listenPort = port;
         routingTable = rt;   
+        neighborSocket =routerToRouterSocket;
+        try
+        {
+            toRouter = new PrintWriter(neighborSocket.getOutputStream(), true);
+            fromRouter = new BufferedReader(new InputStreamReader(neighborSocket.getInputStream()));
+        }
+        catch(IOException ioe)
+        {
+            
+        }
     }
     
     public void setThreadName(String name)
@@ -83,10 +93,6 @@ public class ClientListenerThread extends Thread{
     {
         if(th == null)
         {
-            if(RouterNodeUI.routerConnSocket != null)
-            {
-                setNeighborSocket(RouterNodeUI.routerConnSocket);
-            }
             th = new Thread(this, threadName);
             th.start();
         }
@@ -107,12 +113,13 @@ public class ClientListenerThread extends Thread{
             //in the event multiple clients are simultaneously connecting, we try to service them as soon as possible
             //also, the port must be adjusted for unique connections
             listenPort += 1;
-            clt = new ClientListenerThread("CLT (stacked)", listenPort, routingTable);
+            clt = new ClientListenerThread("CLT (stacked)", listenPort, routingTable, neighborSocket);
             clt.listenStart();
 
             toClient = new PrintWriter(incConnection.getOutputStream(), true);
             fromClient = new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
 
+            //for registration
             String potentialUser = fromClient.readLine();
             boolean failFlag = false;
             for (int i = 0; i < routingTable.size(); i++) 
@@ -161,6 +168,9 @@ public class ClientListenerThread extends Thread{
                 }
                 toClient.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
             }
+            else
+                return;
+            
             while(incConnection.isConnected())
             {
                 String input;
