@@ -92,7 +92,7 @@ public class RouterListenerThread extends Thread{
     }
     public void makeResponse(String input)
     {
-        Socket routerSocket = routingTable.get(0).getSocket();
+        Socket routerSocket = RouterNodeUI.routerConnSocket;
         BufferedReader fromRouter;
         PrintWriter toRouter;
         
