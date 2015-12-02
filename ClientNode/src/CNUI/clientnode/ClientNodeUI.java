@@ -388,7 +388,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
         
         String routerIP = routerIPTF.getText();
         int portNum = 5555;
-        
+        boolean failFlag = true;
         for(int i = 0; i < 100; i++)
         {
             try 
@@ -399,6 +399,8 @@ public class ClientNodeUI extends javax.swing.JFrame {
                 fromRouter = new BufferedReader(new InputStreamReader(sockToRouter.getInputStream()));
                 usernameTF.setEnabled(true);
                 registerButton.setEnabled(true);
+                failFlag = false;
+                break;
             } 
             catch (UnknownHostException e) 
             {
@@ -411,7 +413,14 @@ public class ClientNodeUI extends javax.swing.JFrame {
                 routerErrLabel.setEnabled(true);
             }
         }
-        
+        if(failFlag)
+        {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Failed to connect to the router. Please try again.", 
+                    "Connection failure",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_connectRouterButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
