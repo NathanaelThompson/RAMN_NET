@@ -338,6 +338,9 @@ public class RouterNodeUI extends javax.swing.JFrame {
                     "Connection successfully establish. You may now listen for clients.",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE);
+            
+            clt = new ClientListenerThread();
+            clt.setNeighborSocket(routerConnSocket);
         }
         catch(IOException ioe)
         {
@@ -352,24 +355,18 @@ public class RouterNodeUI extends javax.swing.JFrame {
     ClientListenerThread clt = null;
     private void listenClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listenClientButtonActionPerformed
         //start a new thread to listen for clients
-        /*if(clt != null)
+        if(clt != null)
         {
             clt.setName("Client-Listening-Thread");
             clt.setListenPort(5555);
             clt.setRoutingTable(rtManager.routingTable);
-            
+            clt.listenStart();
         }
         else
         {
-            clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable);
-            
-            if(routerConnSocket != null)
-            {
-                clt.setNeighborSocket(routerConnSocket);
-            }
-        }*/
-        clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable, routerConnSocket);
-        clt.listenStart();
+            clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable, routerConnSocket);
+            clt.listenStart();
+        }
     }//GEN-LAST:event_listenClientButtonActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
