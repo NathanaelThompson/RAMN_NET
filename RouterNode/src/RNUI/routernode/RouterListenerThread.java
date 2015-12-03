@@ -223,7 +223,11 @@ public class RouterListenerThread extends Thread{
                     {
                         if(routingTable.get(i).getUsername().equals(user))
                         {
-                            toConnection.println(routingTable.get(i).getSocket().getRemoteSocketAddress().toString());
+                            //String ipToPrint = routingTable.get(i).getSocket().getRemoteSocketAddress().toString();
+                            String ipToPrint = routingTable.get(i).getSocket().getInetAddress().toString();
+                            ipToPrint = ipToPrint.replace("/","");
+                            System.out.println(routingTable.get(i).getSocket().getInetAddress().toString());
+                            toConnection.println(ipToPrint);
                             foundFlag = true;
                             return;
                         }
