@@ -50,8 +50,10 @@ public class ClientListenerThread extends Thread{
         neighborSocket =routerToRouterSocket;
         try
         {
+            if(neighborSocket != null){
             toRouter = new PrintWriter(neighborSocket.getOutputStream(), true);
             fromRouter = new BufferedReader(new InputStreamReader(neighborSocket.getInputStream()));
+            }
         }
         catch(IOException ioe)
         {
