@@ -216,13 +216,21 @@ public class RouterListenerThread extends Thread{
             case RouterNodeUI.RAMN_REQUEST_IP://for whenever a client requests a connection located outside of its router
                 try
                 {
+                    String user;
+                    user = fromConnection.readLine();
+                    boolean foundFlag = false;
                     for(int i = 0; i < routingTable.size(); i++)
                     {
-                        if(routingTable.get(i).getUsername().equals(fromConnection.readLine()))
+                        if(routingTable.get(i).getUsername().equals(user))
                         {
                             toConnection.println(routingTable.get(i).getSocket().getRemoteSocketAddress().toString());
+                            foundFlag = true;
                             return;
                         }
+                    }
+                    if(!foundFlag)
+                    {
+                        toConnection.println(RouterNodeUI.RAMN_RESPONSE_ERROR);
                     }
                 }
                 catch(IOException ioe)
