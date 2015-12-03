@@ -261,6 +261,11 @@ public class ClientListenerThread extends Thread{
                         break;
                     case RouterNodeUI.RAMN_REQUEST_DISCONNECT:
                         break;
+                    case RouterNodeUI.RAMN_REQUEST_ROUTER_DISCONNECT:
+                        incConnection.close();
+                        fromClient.close();
+                        toClient.close();
+                        break;
                 }    
             }
         } 
