@@ -62,6 +62,12 @@ public class RouterListenerThread extends Thread{
             toConnection= new PrintWriter(incConnection.getOutputStream(),true);
             fromConnection= new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
                 
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Successfully connected to the neighboring router. You may now listen for clients.", 
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+            
             RouterNodeUI.routerConnSocket = incConnection;
             //create a new RAMNConnection and add it to the routing table
             metaData = new RAMNConnection("RAMN_ROUTER_CONNECTOR", incConnection);
@@ -160,12 +166,11 @@ public class RouterListenerThread extends Thread{
                             return;//user found, return;
                         }
                     }
-                    
+                    /*
                     //since the user wasn't found, have to poll neighbor router
                     toRouter = new PrintWriter(routerSocket.getOutputStream(),true);
                     toRouter.println(RouterNodeUI.RAMN_REQUEST_DISCONNECT);
-                    toRouter.println(userToDisconnect);
-                    
+                    toRouter.println(userToDisconnect);*/
                 }
                 catch(IOException ioe){}
                 

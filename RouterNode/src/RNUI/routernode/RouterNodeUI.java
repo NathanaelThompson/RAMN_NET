@@ -333,17 +333,6 @@ public class RouterNodeUI extends javax.swing.JFrame {
         try
         {
             routerConnSocket = new Socket(ipAddress, connPort);
-            /*
-            if(clt != null)
-            {
-                clt.setNeighborSocket(routerConnSocket);
-            }
-            else
-            {
-                clt = new ClientListenerThread();
-                clt.setNeighborSocket(routerConnSocket);
-                
-            }*/
         }
         catch(IOException ioe)
         {
@@ -374,7 +363,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
                 clt.setNeighborSocket(routerConnSocket);
             }
         }*/
-        clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable);
+        clt = new ClientListenerThread("Client-Listening-Thread", 5555, rtManager.routingTable, routerConnSocket);
         clt.listenStart();
     }//GEN-LAST:event_listenClientButtonActionPerformed
 

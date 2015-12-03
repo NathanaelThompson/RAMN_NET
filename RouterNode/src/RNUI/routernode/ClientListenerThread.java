@@ -207,6 +207,17 @@ public class ClientListenerThread extends Thread{
                             }
                         }
                         toClient.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
+                        break;
+                    case RouterNodeUI.RAMN_REQUEST_IP:
+                        for(int i = 0; i < routingTable.size(); i++)
+                        {
+                             if(routingTable.get(i).getUsername().equals(fromRouter.readLine()))
+                             {
+                                 toRouter.println(routingTable.get(i).getSocket().getRemoteSocketAddress().toString());
+                                 return;
+                             }
+                        }
+                        break;
                 }    
             }
         } 
