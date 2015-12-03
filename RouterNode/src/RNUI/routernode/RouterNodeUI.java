@@ -24,6 +24,7 @@ package RNUI.routernode;
 
 import java.io.*;
 import java.net.*;
+import javax.swing.JOptionPane;
 
 public class RouterNodeUI extends javax.swing.JFrame {
     
@@ -333,6 +334,10 @@ public class RouterNodeUI extends javax.swing.JFrame {
         try
         {
             routerConnSocket = new Socket(ipAddress, connPort);
+            JOptionPane.showMessageDialog(null,
+                    "Connection successfully establish. You may now listen for clients.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
         catch(IOException ioe)
         {

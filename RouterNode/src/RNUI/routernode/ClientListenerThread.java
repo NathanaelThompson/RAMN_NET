@@ -137,36 +137,6 @@ public class ClientListenerThread extends Thread{
                 metaData = new RAMNConnection(potentialUser, incConnection);
                 routingTable.add(metaData);
                 toClient.println(RouterNodeUI.RAMN_RESPONSE_OK);
-
-                //print connections to client
-                if (neighborSocket != null) 
-                {
-                    //get connections from neighbor router
-                    toRouter.println(RouterNodeUI.RAMN_REQUEST_PEERLIST);
-                    String user;
-                    while (!((user = fromRouter.readLine()).equals(RouterNodeUI.RAMN_TRANSFER_COMPLETE))) 
-                    {
-                        toClient.println(user);
-                    }
-
-                    //get connections for this router's routing table
-                    for (int i = 0; i < routingTable.size(); i++) 
-                    {
-                        user = routingTable.get(i).getUsername();
-                        toClient.println(user);
-                    }
-                } 
-                else 
-                {
-                    //get connections for this router's routing table
-                    String user;
-                    for (int i = 0; i < routingTable.size(); i++)
-                    {
-                        user = routingTable.get(i).getUsername();
-                        toClient.println(user);
-                    }
-                }
-                toClient.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
             }
             else
                 return;

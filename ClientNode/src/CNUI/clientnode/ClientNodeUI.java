@@ -452,11 +452,11 @@ public class ClientNodeUI extends javax.swing.JFrame {
         {
             //toRouter.println(RAMN_REQUEST_REGISTER);
             toRouter.println(username);
-            toRouter.flush();
             
             try
             {
-                String ramnResponse = fromRouter.readLine();
+                String ramnResponse = null;
+                ramnResponse = fromRouter.readLine();
                 if(ramnResponse.equals(RAMN_RESPONSE_OK))//if registration went ok
                 {
                     /*Get users connected to the network,
@@ -465,6 +465,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     connectClientButton.setEnabled(true);
                     refreshClientButton.setEnabled(true);
                     
+                    toRouter.println(RAMN_REQUEST_PEERLIST);
                     DefaultListModel list = new DefaultListModel();
                     while(!((ramnResponse = fromRouter.readLine()).equals(RAMN_TRANSFER_COMPLETE))) //While the transfer isn't complete
                     {
