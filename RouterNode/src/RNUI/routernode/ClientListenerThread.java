@@ -171,7 +171,7 @@ public class ClientListenerThread extends Thread{
             else
                 return;
             
-            while(incConnection.isConnected())
+            while(!incConnection.isClosed())
             {
                 String input;
                 input = fromClient.readLine();

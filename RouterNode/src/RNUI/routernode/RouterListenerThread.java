@@ -86,7 +86,7 @@ public class RouterListenerThread extends Thread{
         
         //while the connection is open
         String message;
-        while(incConnection.isConnected())
+        while(!incConnection.isClosed())
         {
             try
             {

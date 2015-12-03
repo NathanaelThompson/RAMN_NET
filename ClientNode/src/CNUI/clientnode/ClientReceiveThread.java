@@ -81,7 +81,7 @@ public class ClientReceiveThread extends Thread{
                     //...do I/O while connected
                     fromPeer = new BufferedReader(new InputStreamReader(commSocket.getInputStream()));
                     String msgReceived;
-                    while(commSocket.isConnected())
+                    while(!commSocket.isClosed())
                     {
                         msgReceived = fromPeer.readLine();
                         chatArea.append("Received > " + msgReceived);
