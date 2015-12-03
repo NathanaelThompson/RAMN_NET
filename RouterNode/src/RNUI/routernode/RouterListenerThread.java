@@ -29,7 +29,7 @@ public class RouterListenerThread extends Thread{
     private Thread th;
     private final String threadName;
     private ServerSocket listenSocket;
-    private final int listenPort;
+    private int listenPort;
     ArrayList<RAMNConnection> routingTable;
     BufferedReader fromConnection=null;
     PrintWriter toConnection=null;
@@ -40,6 +40,25 @@ public class RouterListenerThread extends Thread{
         threadName = t_name;
         listenPort = port;
         routingTable = rt;
+    }
+    public RouterListenerThread(String t_name, ArrayList<RAMNConnection> rt, Socket routerToRouterSocket)
+    {
+        threadName = t_name;
+        routingTable = rt;
+        if(routerToRouterSocket != null)
+        {
+            incConnection = routerToRouterSocket;
+            try
+            {
+                toConnection = new PrintWriter(incConnection.getOutputStream(), true);
+                fromConnection = new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
+            }
+            catch(IOException ioe)
+            {
+                
+            }
+        }
+        
     }
     public void listenStart()
     {
@@ -56,12 +75,14 @@ public class RouterListenerThread extends Thread{
         RAMNConnection metaData;
         try
         {
-            //grab the incoming connection from the router
-            listenSocket = new ServerSocket(listenPort);
-            incConnection = listenSocket.accept();
-            toConnection= new PrintWriter(incConnection.getOutputStream(),true);
-            fromConnection= new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
-                
+            if(incConnection == null)
+            {
+                //grab the incoming connection from the router
+                listenSocket = new ServerSocket(listenPort);
+                incConnection = listenSocket.accept();
+                toConnection= new PrintWriter(incConnection.getOutputStream(),true);
+                fromConnection= new BufferedReader(new InputStreamReader(incConnection.getInputStream()));
+            }
             JOptionPane.showMessageDialog(
                     null,
                     "Successfully connected to the neighboring router. You may now listen for clients.", 

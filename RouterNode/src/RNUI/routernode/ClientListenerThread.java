@@ -29,7 +29,7 @@ public class ClientListenerThread extends Thread{
     private Thread th;
     private String threadName;
     private ServerSocket listenSocket;
-    private int listenPort;
+    public int listenPort;
     ArrayList<RAMNConnection> routingTable;
     BufferedReader fromClient, fromRouter;
     PrintWriter toClient, toRouter;

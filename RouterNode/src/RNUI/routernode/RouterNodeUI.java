@@ -287,6 +287,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitButtonActionPerformed
 
+    RouterListenerThread rlt;
     private void startListenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startListenButtonActionPerformed
         int listenPort;
         try
@@ -305,7 +306,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
             listenPort = 5555;
         }
         
-        RouterListenerThread rlt = new RouterListenerThread("ListenForRouter", listenPort, rtManager.routingTable);
+        rlt = new RouterListenerThread("ListenForRouter", listenPort, rtManager.routingTable);
         rlt.listenStart();
     }//GEN-LAST:event_startListenButtonActionPerformed
 
@@ -341,6 +342,8 @@ public class RouterNodeUI extends javax.swing.JFrame {
             
             clt = new ClientListenerThread();
             clt.setNeighborSocket(routerConnSocket);
+            rlt = new RouterListenerThread("RLT process", rtManager.routingTable, routerConnSocket);
+            rlt.listenStart();
         }
         catch(IOException ioe)
         {
@@ -357,7 +360,7 @@ public class RouterNodeUI extends javax.swing.JFrame {
         //start a new thread to listen for clients
         if(clt != null)
         {
-            clt.setName("Client-Listening-Thread");
+            clt.setName("Client-Listening-Thread pre-init");
             clt.setListenPort(5555);
             clt.setRoutingTable(rtManager.routingTable);
             clt.listenStart();
