@@ -181,7 +181,7 @@ public class ClientListenerThread extends Thread{
                         //print connections to client
                         if (neighborSocket != null) 
                         {
-                            //get connections from neighbor router
+                            //get users from neighbor router
                             toRouter.println(RouterNodeUI.RAMN_REQUEST_PEERLIST);
                             String user;
                             while (!((user = fromRouter.readLine()).equals(RouterNodeUI.RAMN_TRANSFER_COMPLETE))) 
@@ -217,6 +217,49 @@ public class ClientListenerThread extends Thread{
                                  return;
                              }
                         }
+                        break;
+                    case RouterNodeUI.RAMN_REQUEST_CONNECTION:
+                        //get the user requested
+                        String userRequested = fromClient.readLine();
+                        String ipRequested = "x.x.x.x";
+                    
+                        //try to find user requested in local routing table
+                        for(int i = 0; i < routingTable.size();i++)
+                        {
+                            //if user is found
+                            if(routingTable.get(i).getUsername().equals((userRequested)))
+                            {
+                                //tell the requestor, and return
+                                ipRequested = routingTable.get(i).getSocket().getRemoteSocketAddress().toString();
+                                toClient.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                                toClient.println(ipRequested);
+                                return;
+                            }
+                        }
+                    
+                        //if it wasn't found...
+                        if(ipRequested.equals("x.x.x.x"))
+                        {
+                            //...ask neighboring router to search
+                            toRouter.println(RouterNodeUI.RAMN_REQUEST_IP);
+                            toRouter.println(userRequested);
+                            ipRequested = fromRouter.readLine();
+                        }
+                    
+                        //if the neighboring router couldn't find it either...
+                        if(ipRequested.equals(RouterNodeUI.RAMN_RESPONSE_ERROR))
+                        {
+                            //...signal to client the connection wasn't found
+                            toClient.println(RouterNodeUI.RAMN_RESPONSE_ERROR);
+                        }
+                        else
+                        {
+                            //otherwise, tell the client it's all good, and give them the requested IP address
+                            toClient.println(RouterNodeUI.RAMN_RESPONSE_OK);
+                            toClient.println(ipRequested);
+                        }
+                        break;
+                    case RouterNodeUI.RAMN_REQUEST_DISCONNECT:
                         break;
                 }    
             }

@@ -365,7 +365,7 @@ public class ClientNodeUI extends javax.swing.JFrame {
         //and close whatever streams are open,
         try
         {            
-            toRouter.println("RDCON");
+            toRouter.println(RAMN_REQUEST_ROUTER_DISCONNECT);
             sockToRouter.close();
             toRouter.close();
             fromRouter.close();
@@ -531,12 +531,12 @@ public class ClientNodeUI extends javax.swing.JFrame {
             toRouter.println(RAMN_REQUEST_CONNECTION);
             toRouter.println(userToConnect);
             
+            //if the user's IP was found
             if(fromRouter.readLine().equals(RAMN_RESPONSE_OK))
             {
                 String ipToConnect = fromRouter.readLine();
                 sockToPeer = new Socket(ipToConnect, 8888);
                 toPeer = new PrintWriter(sockToPeer.getOutputStream(), true);
-                //launch client receive thread
             }
             else
             {
