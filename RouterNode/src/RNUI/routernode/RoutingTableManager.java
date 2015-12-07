@@ -16,10 +16,6 @@
  */
 package RNUI.routernode;
 
-/**
- *
- * @author Nate
- */
 import java.util.ArrayList;
 
 public class RoutingTableManager

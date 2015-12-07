@@ -83,6 +83,14 @@ public class ClientReceiveThread extends Thread{
                     String msgReceived;
                     while(!commSocket.isClosed())
                     {
+                        try
+                        {
+                            Thread.sleep(100);
+                        }
+                        catch(InterruptedException iex)
+                        {
+                            
+                        }
                         msgReceived = fromPeer.readLine();
                         chatArea.append("Received > " + msgReceived);
                     }

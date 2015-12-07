@@ -209,13 +209,17 @@ public class ClientListenerThread extends Thread{
                             }
                         }
                     
+                        
                         //if it wasn't found...
                         if(ipRequested.equals("x.x.x.x"))
                         {
+                            
                             //...ask neighboring router to search
                             toRouter.println(RouterNodeUI.RAMN_REQUEST_IP);
                             toRouter.println(userRequested);
-                            ipRequested = fromRouter.readLine();
+                            Thread.sleep(500);
+                            ipRequested = fromRouter.readLine();//////////
+                            System.out.println(ipRequested);
                         }
                     
                         //if the neighboring router couldn't find it either...
@@ -244,6 +248,10 @@ public class ClientListenerThread extends Thread{
         catch (IOException ioe) 
         {
             ioe.printStackTrace();
+        }
+        catch(InterruptedException iex)
+        {
+            iex.printStackTrace();
         }
     }
 }

@@ -16,10 +16,6 @@
  */
 package RNUI.routernode;
 
-/**
- *
- * @author Nate
- */
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -124,9 +120,10 @@ public class RouterListenerThread extends Thread{
             return;
         switch(input)
         {
-            case RouterNodeUI.RAMN_REQUEST_CONNECTION://WIP
+            case RouterNodeUI.RAMN_REQUEST_CONNECTION://Eventually returns an IP to the connection
                 try
                 {
+                    
                     //get the user requested
                     String userRequested = fromConnection.readLine();
                     String ipRequested = "x.x.x.x";
@@ -138,7 +135,7 @@ public class RouterListenerThread extends Thread{
                         if(routingTable.get(i).getUsername().equals((userRequested)))
                         {
                             //tell the requestor, and return
-                            ipRequested = routingTable.get(i).getSocket().getRemoteSocketAddress().toString();
+                            String ipToPrint = routingTable.get(i).getSocket().getInetAddress().toString();
                             toConnection.println(RouterNodeUI.RAMN_RESPONSE_OK);
                             toConnection.println(ipRequested);
                             return;
@@ -151,7 +148,9 @@ public class RouterListenerThread extends Thread{
                         //...ask neighboring router to search
                         toConnection.println(RouterNodeUI.RAMN_REQUEST_IP);
                         toConnection.println(userRequested);
-                        ipRequested = fromConnection.readLine();
+                        Thread.sleep(500);
+                        
+                        ipRequested = fromConnection.readLine();//LINE OF FAILURE
                     }
                     
                     //if the neighboring router couldn't find it either...
@@ -170,6 +169,10 @@ public class RouterListenerThread extends Thread{
                 catch(IOException ioe)
                 {
                     toConnection.println(RouterNodeUI.RAMN_RESPONSE_ERROR);
+                }
+                catch(InterruptedException iex)
+                {
+                    iex.printStackTrace();
                 }
                 break;
             case RouterNodeUI.RAMN_REQUEST_DISCONNECT://when a peer wishes to disconnect from another peer
@@ -223,13 +226,12 @@ public class RouterListenerThread extends Thread{
                     {
                         if(routingTable.get(i).getUsername().equals(user))
                         {
-                            //String ipToPrint = routingTable.get(i).getSocket().getRemoteSocketAddress().toString();
-                            String ipToPrint = routingTable.get(i).getSocket().getInetAddress().toString();
-                            ipToPrint = ipToPrint.replace("/","");
-                            System.out.println(routingTable.get(i).getSocket().getInetAddress().toString());
+                            String ipToPrint = routingTable.get(i).getSocket().getInetAddress().toString() + "\n";
+                            
+                            //ipToPrint = ipToPrint.replace("/","");
                             toConnection.println(ipToPrint);
                             foundFlag = true;
-                            return;
+                            break;
                         }
                     }
                     if(!foundFlag)
@@ -239,9 +241,9 @@ public class RouterListenerThread extends Thread{
                 }
                 catch(IOException ioe)
                 {
-                    
+                    ioe.printStackTrace();
                 }
-               
+                
                 break;
             default:
                 break;
