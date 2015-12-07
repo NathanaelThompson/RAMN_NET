@@ -464,14 +464,20 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     userJList.setEnabled(true);
                     connectClientButton.setEnabled(true);
                     refreshClientButton.setEnabled(true);
-                    /*
+                    long startTime, endTime, totalTime;
+                    startTime = System.currentTimeMillis();
+                    
                     toRouter.println(RAMN_REQUEST_PEERLIST);
                     DefaultListModel list = new DefaultListModel();
                     while(!((ramnResponse = fromRouter.readLine()).equals(RAMN_TRANSFER_COMPLETE))) //While the transfer isn't complete
                     {
                         list.addElement(ramnResponse);
                     }
-                    userJList.setModel(list);*/
+                    
+                    userJList.setModel(list);
+                    endTime = System.currentTimeMillis();
+                    totalTime = endTime - startTime;
+                    JOptionPane.showMessageDialog(null, "Transfer time: " + totalTime, "Transfer time", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else if(ramnResponse.equals(RAMN_RESPONSE_DENIED))//if denied
                 {
