@@ -226,7 +226,7 @@ public class RouterListenerThread extends Thread{
                     {
                         if(routingTable.get(i).getUsername().equals(user))
                         {
-                            String ipToPrint = routingTable.get(i).getSocket().getInetAddress().toString() + "\n";
+                            String ipToPrint = routingTable.get(i).getSocket().getInetAddress().toString()+"\r\n";
                             
                             //ipToPrint = ipToPrint.replace("/","");
                             toConnection.println(ipToPrint);
