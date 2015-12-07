@@ -200,10 +200,17 @@ public class RouterListenerThread extends Thread{
                 
                 break;
             case RouterNodeUI.RAMN_REQUEST_PEERLIST://When clients need to know who else is in the network
+                long startTime, endTime, totalTime;
+                startTime =System.currentTimeMillis();
                 for(int i = 0; i < routingTable.size(); i++)
                 {
                     toConnection.println(routingTable.get(i).getUsername());
                 }
+                endTime = System.currentTimeMillis();
+                totalTime = endTime - startTime;
+                JOptionPane.showMessageDialog(null, "Total router to router: " + totalTime,
+                        "Transfer time", JOptionPane.INFORMATION_MESSAGE);
+                
                 toConnection.println(RouterNodeUI.RAMN_TRANSFER_COMPLETE);
                 break;
             case RouterNodeUI.RAMN_REQUEST_ROUTER_DISCONNECT://when a client wishes to disconnect from the router

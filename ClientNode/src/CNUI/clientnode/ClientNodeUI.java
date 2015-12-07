@@ -570,6 +570,8 @@ public class ClientNodeUI extends javax.swing.JFrame {
     }//GEN-LAST:event_textToSendActionPerformed
 
     private void refreshClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshClientButtonActionPerformed
+        long startTime, endTime, totalTime;
+        startTime = System.currentTimeMillis();
         toRouter.println(RAMN_REQUEST_PEERLIST);
         DefaultListModel list = new DefaultListModel();
         String ramnResponse;
@@ -579,12 +581,18 @@ public class ClientNodeUI extends javax.swing.JFrame {
             {
                 list.addElement(ramnResponse);
             }
+            endTime = System.currentTimeMillis();
+            totalTime = endTime - startTime;
+            JOptionPane.showMessageDialog(null, "Total transfer time: " + totalTime,
+                    "Transfer time", JOptionPane.INFORMATION_MESSAGE);
             userJList.setModel(list);
         }
         catch(IOException ioe)
         {
             
         }
+        
+        
     }//GEN-LAST:event_refreshClientButtonActionPerformed
 
     /**
