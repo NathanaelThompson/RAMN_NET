@@ -464,14 +464,14 @@ public class ClientNodeUI extends javax.swing.JFrame {
                     userJList.setEnabled(true);
                     connectClientButton.setEnabled(true);
                     refreshClientButton.setEnabled(true);
-                    
+                    /*
                     toRouter.println(RAMN_REQUEST_PEERLIST);
                     DefaultListModel list = new DefaultListModel();
                     while(!((ramnResponse = fromRouter.readLine()).equals(RAMN_TRANSFER_COMPLETE))) //While the transfer isn't complete
                     {
                         list.addElement(ramnResponse);
                     }
-                    userJList.setModel(list);
+                    userJList.setModel(list);*/
                 }
                 else if(ramnResponse.equals(RAMN_RESPONSE_DENIED))//if denied
                 {
